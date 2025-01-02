@@ -1,3 +1,4 @@
+import Card from "@/components/Card";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import MetaTag from "@/components/MetaTag";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,7 @@ export default function ForgotPasswordPage() {
       <MetaTag title={"Lupa Password"} />
 
       <AuthLayout>
-        <section className="bg-gray-950 border border-gray-900 rounded-lg p-4 min-[448px]:p-6">
+        <Card>
           <form className="space-y-4">
             <div className="text-xs">Masukkan alamat email yang terkait dengan akun Anda dan kami akan mengirimkan tautan untuk mengatur ulang kata sandi Anda.</div>
 
@@ -40,7 +41,7 @@ export default function ForgotPasswordPage() {
               </Button>
             </div>
           </form>
-        </section>
+        </Card>
       </AuthLayout>
     </>
   );

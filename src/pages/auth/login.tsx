@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Card from "@/components/Card";
 
 export default function LoginPage() {
   return (
@@ -12,7 +13,7 @@ export default function LoginPage() {
       <MetaTag title={"Login"} />
 
       <AuthLayout>
-        <section className="bg-gray-950 border border-gray-900 rounded-lg p-4 min-[448px]:p-6">
+        <Card>
           <form className="space-y-4">
             <div className="grid w-full items-center gap-1.5">
               <Label htmlFor="username" className="text-[11px] font-normal md:font-medium">
@@ -52,7 +53,7 @@ export default function LoginPage() {
               </Button>
             </div>
           </form>
-        </section>
+        </Card>
 
         <section className="flex flex-col min-[350px]:flex-row gap-4">
           <Button className="w-full text-[12px] bg-gray-800 text-white hover:bg-gray-900" asChild>

@@ -1,3 +1,4 @@
+import Card from "@/components/Card";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import MetaTag from "@/components/MetaTag";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ export default function RegisterPage() {
       <MetaTag title={"Register"} />
 
       <AuthLayout>
-        <section className="bg-gray-950 border border-gray-900 rounded-lg p-4 min-[448px]:p-6">
+        <Card>
           <form className="space-y-4">
             <div className="grid w-full items-center gap-1.5">
               <Label htmlFor="name" className="text-[11px] font-normal md:font-medium">
@@ -56,7 +57,7 @@ export default function RegisterPage() {
               </Button>
             </div>
           </form>
-        </section>
+        </Card>
       </AuthLayout>
     </>
   );
