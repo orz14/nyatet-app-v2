@@ -2,6 +2,10 @@ import { Comfortaa } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { Toaster } from "../ui/toaster";
+import { useAuthContext } from "@/contexts/AuthContext";
+import Card from "../Card";
+import { Loader2 } from "lucide-react";
 
 const comfortaa = Comfortaa({
   weight: ["300", "400", "500", "600", "700"],
@@ -26,20 +30,34 @@ function MenuItem({ href, label }: MenuItemProps) {
 }
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
+  const { loadingContext } = useAuthContext();
+
   return (
-    <main className={`${comfortaa.className} w-full min-h-screen bg-gray-950 text-gray-50 flex flex-col items-center justify-center`}>
-      <div className="w-full max-w-md px-4 py-6 space-y-4">
-        <header className="mb-10">
-          <Image src="/logo.webp" alt="" width={500} height={500} className="w-full max-w-[140px] min-[448px]:max-w-[170px] h-auto mx-auto" priority={true} />
-        </header>
+    <>
+      <main className={`${comfortaa.className} w-full min-h-screen bg-gray-950 text-gray-50 flex flex-col items-center justify-center`}>
+        <div className="w-full max-w-md px-4 py-6 space-y-4">
+          <header className="mb-10">
+            <Image src="/logo.webp" alt="" width={500} height={500} className="w-full max-w-[140px] min-[448px]:max-w-[170px] h-auto mx-auto" priority={true} />
+          </header>
 
-        <nav className="bg-gray-900 rounded-lg p-2 text-[11px] font-normal min-[448px]:text-xs min-[448px]:font-medium flex justify-stretch gap-2 overflow-x-auto">
-          <MenuItem href={"/auth/login"} label={"Login"} />
-          <MenuItem href={"/auth/register"} label={"Daftar"} />
-        </nav>
+          <nav className="bg-gray-900 rounded-lg p-2 text-[11px] font-normal min-[448px]:text-xs min-[448px]:font-medium flex justify-stretch gap-2 overflow-x-auto">
+            <MenuItem href={"/auth/login"} label={"Login"} />
+            <MenuItem href={"/auth/register"} label={"Daftar"} />
+          </nav>
 
-        {children}
-      </div>
-    </main>
+          {loadingContext ? (
+            <Card>
+              <div className="flex flex-row items-center justify-center text-xs">
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <span>Loading</span>
+              </div>
+            </Card>
+          ) : (
+            children
+          )}
+        </div>
+      </main>
+      <Toaster />
+    </>
   );
 }
