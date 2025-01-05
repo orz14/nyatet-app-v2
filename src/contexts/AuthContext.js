@@ -5,7 +5,7 @@ import Offline from "@/components/Offline";
 import useService from "@/configs/api/service";
 import useAuth from "@/configs/api/auth";
 import { useToast } from "@/hooks/use-toast";
-import { decryptData } from "@/lib/crypto";
+import { decryptData, encryptData } from "@/lib/crypto";
 
 export const AuthContext = createContext();
 
@@ -14,15 +14,43 @@ export const AuthProvider = ({ children }) => {
   const { toast } = useToast();
   const { logout: logoutUser } = useAuth();
   const { checkConnection } = useServer();
-  const { getIp: getUserIp, getToken, removeToken } = useService();
+  const { getIp: getUserIp, setToken, getToken, removeToken } = useService();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [offline, setOffline] = useState(false);
 
-  function logout() {
+  async function login(res) {
+    const ip = localStorage.getItem("userIp") ?? null;
+    const token = res.data.token;
+    const user = {
+      id: res.data.data.id,
+      name: res.data.data.name,
+      username: res.data.data.username,
+      email: res.data.data.email,
+      roleId: res.data.data.role_id,
+      avatar: res.data.data.avatar,
+    };
+
+    await setToken(token);
+    const encryptedData = encryptData({ token, ip, user });
+    if (encryptedData) {
+      localStorage.setItem("encryptedData", encryptedData);
+    }
+  }
+
+  async function logout() {
     setLoading(true);
+    setUser(null);
+    await removeToken();
     localStorage.removeItem("userIp");
     localStorage.removeItem("encryptedData");
+  }
+
+  function handleUnauthenticated(err, url) {
+    if (err.response?.data?.message == "Unauthenticated.") {
+      setLoading(true);
+      router.push(url);
+    }
   }
 
   useEffect(() => {
@@ -45,18 +73,34 @@ export const AuthProvider = ({ children }) => {
     }
 
     async function handleLogout(callbackUrl, message) {
-      await removeToken();
-      logout();
+      await logout();
 
       toast({
         variant: "destructive",
         description: message,
       });
 
-      router.push({
-        pathname: "/auth/login",
-        query: { callbackUrl },
-      });
+      if (callbackUrl) {
+        router.push({
+          pathname: "/auth/login",
+          query: { callbackUrl },
+        });
+      } else {
+        router.push("/auth/login");
+      }
+    }
+
+    async function handleDeleteToken(token, callbackUrl) {
+      try {
+        const resLogout = await logoutUser(token);
+        if (resLogout.status === 200) {
+          await handleLogout(callbackUrl, "Please log in again.");
+        }
+      } catch (err) {
+        if (err.status === 401) {
+          await handleLogout(callbackUrl, "Token not valid. Please log in again.");
+        }
+      }
     }
 
     async function checkAccess() {
@@ -75,30 +119,33 @@ export const AuthProvider = ({ children }) => {
             try {
               const resToken = await getToken();
               if (resToken.status === 204) {
-                localStorage.removeItem("encryptedData");
+                const encryptedData = localStorage.getItem("encryptedData") ?? null;
+                if (encryptedData) {
+                  const decryptedData = decryptData(encryptedData);
+                  const token = decryptedData.token;
+                  handleDeleteToken(token, null);
+                }
               } else if (resToken.status === 200) {
                 const token = resToken?.data.token;
                 const encryptedData = localStorage.getItem("encryptedData") ?? null;
+
                 if (!encryptedData) {
-                  try {
-                    const resLogout = await logoutUser(token);
-                    if (resLogout.status === 200) {
-                      await handleLogout(callbackUrl, "Please log in again.");
-                    }
-                  } catch (err) {
-                    if (err.status === 401) {
-                      await handleLogout(callbackUrl, "Token not valid. Please log in again.");
-                    }
-                  }
+                  handleDeleteToken(token, callbackUrl);
                 } else {
                   const decryptedData = decryptData(encryptedData);
+                  const ipChanged = decryptedData.ip != ip;
+                  const tokenChanged = decryptedData.token != token;
 
-                  if (decryptedData.ip != ip) {
+                  if (ipChanged || tokenChanged) {
                     try {
                       const resLogout = await logoutUser(token);
 
                       if (resLogout.status === 200) {
-                        await handleLogout(callbackUrl, "Your ip address has changed. Please log in again.");
+                        if (ipChanged) {
+                          await handleLogout(callbackUrl, "Your ip address has changed. Please log in again.");
+                        } else if (tokenChanged) {
+                          await handleLogout(callbackUrl, "Your token has changed. Please log in again.");
+                        }
                       }
                     } catch (err) {
                       if (err.status === 401) {
@@ -108,7 +155,6 @@ export const AuthProvider = ({ children }) => {
                   }
 
                   setUser({
-                    token: decryptedData.token,
                     id: decryptedData.user.id,
                     name: decryptedData.user.name,
                     username: decryptedData.user.username,
@@ -145,7 +191,15 @@ export const AuthProvider = ({ children }) => {
   }, [router, toast]);
 
   return (
-    <AuthContext.Provider value={{ loadingContext: loading, user, logout }}>
+    <AuthContext.Provider
+      value={{
+        loadingContext: loading,
+        user,
+        login,
+        logout,
+        handleUnauthenticated,
+      }}
+    >
       <div style={{ zIndex: 10 }}>{offline ? <Offline /> : children}</div>
     </AuthContext.Provider>
   );

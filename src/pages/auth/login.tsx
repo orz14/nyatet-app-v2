@@ -12,13 +12,12 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Loader2 } from "lucide-react";
 import useAuth from "@/configs/api/auth";
-import useService from "@/configs/api/service";
-import { encryptData } from "@/lib/crypto";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const { setToken } = useService();
+  const { login: setLogin } = useAuthContext();
   const usernameRef = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -41,27 +40,11 @@ export default function LoginPage() {
     validateOnMount: true,
     onSubmit: async (credentials) => {
       setLoading(true);
-      const ip = localStorage.getItem("userIp") ?? null;
 
       try {
         const res = await login(credentials);
         if (res.status === 200) {
-          const token = res?.data.token;
-          const user = {
-            id: res?.data.data.id,
-            name: res?.data.data.name,
-            username: res?.data.data.username,
-            email: res?.data.data.email,
-            roleId: res?.data.data.role_id,
-            avatar: res?.data.data.avatar,
-          };
-
-          await setToken(token);
-          const encryptedData = encryptData({ token, ip, user });
-          if (encryptedData) {
-            localStorage.setItem("encryptedData", encryptedData);
-          }
-
+          await setLogin(res);
           router.push(callbackUrl ?? "/testing");
         }
       } catch (err) {

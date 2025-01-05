@@ -2,7 +2,7 @@ import useAxiosInterceptors from "@/lib/axios";
 
 function useAuth() {
   const axiosInstance = useAxiosInterceptors();
-  const baseURL = process.env.NEXT_PUBLIC_API_URL || "https://nyatet.orzverse.com/api";
+  const baseURL = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api` : "https://nyatet.orzverse.com/api";
 
   async function login(credentials: { username: string; password: string; remember: boolean }) {
     try {
@@ -13,13 +13,17 @@ function useAuth() {
     }
   }
 
-  async function logout(token: string) {
+  async function logout(token?: string) {
+    const config = token
+      ? {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      : {};
+
     try {
-      const res = await axiosInstance.delete(`${baseURL}/auth/logout`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axiosInstance.delete(`${baseURL}/auth/logout`, config);
       return res;
     } catch (err) {
       throw err;
