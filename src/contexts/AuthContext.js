@@ -6,8 +6,15 @@ import useService from "@/configs/api/service";
 import useAuth from "@/configs/api/auth";
 import { useToast } from "@/hooks/use-toast";
 import { decryptData, encryptData } from "@/lib/crypto";
+import { Comfortaa } from "next/font/google";
+import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 
 export const AuthContext = createContext();
+
+const comfortaa = Comfortaa({
+  weight: ["300", "400", "500", "600", "700"],
+  subsets: ["latin"],
+});
 
 export const AuthProvider = ({ children }) => {
   const router = useRouter();
@@ -18,6 +25,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [offline, setOffline] = useState(false);
+  const isOnline = useOnlineStatus();
 
   async function login(res) {
     const ip = localStorage.getItem("userIp") ?? null;
@@ -200,7 +208,17 @@ export const AuthProvider = ({ children }) => {
         handleUnauthenticated,
       }}
     >
-      <div style={{ zIndex: 10 }}>{offline ? <Offline /> : children}</div>
+      <div className={comfortaa.className}>
+        {(!isOnline || offline) && <Offline message={`${!isOnline ? "Internet Offline" : offline ? "Server Offline" : "Offline"}`} />}
+        <div
+          style={{
+            zIndex: 10,
+            ...(!isOnline || offline ? { pointerEvents: "none" } : {}),
+          }}
+        >
+          {children}
+        </div>
+      </div>
     </AuthContext.Provider>
   );
 };
