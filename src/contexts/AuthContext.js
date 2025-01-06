@@ -61,56 +61,56 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  useEffect(() => {
-    async function getIp() {
-      return new Promise(async (resolve, reject) => {
-        const ipBefore = localStorage.getItem("userIp") ?? null;
-        try {
-          const res = await getUserIp();
-          let ipAfter = res?.data.ip;
-
-          if (ipBefore != ipAfter) {
-            localStorage.setItem("userIp", ipAfter);
-          }
-          resolve(ipAfter);
-        } catch (err) {
-          localStorage.setItem("userIp", null);
-          reject(err);
-        }
-      });
-    }
-
-    async function handleLogout(callbackUrl, message) {
-      await logout();
-
-      toast({
-        variant: "destructive",
-        description: message,
-      });
-
-      if (callbackUrl) {
-        router.push({
-          pathname: "/auth/login",
-          query: { callbackUrl },
-        });
-      } else {
-        router.push("/auth/login");
-      }
-    }
-
-    async function handleDeleteToken(token, callbackUrl) {
+  async function getIp() {
+    return new Promise(async (resolve, reject) => {
+      const ipBefore = localStorage.getItem("userIp") ?? null;
       try {
-        const resLogout = await logoutUser(token);
-        if (resLogout.status === 200) {
-          await handleLogout(callbackUrl, "Please log in again.");
+        const res = await getUserIp();
+        let ipAfter = res?.data.ip;
+
+        if (ipBefore != ipAfter) {
+          localStorage.setItem("userIp", ipAfter);
         }
+        resolve(ipAfter);
       } catch (err) {
-        if (err.status === 401) {
-          await handleLogout(callbackUrl, "Token not valid. Please log in again.");
-        }
+        localStorage.setItem("userIp", null);
+        reject(err);
+      }
+    });
+  }
+
+  async function handleLogout(callbackUrl, message) {
+    await logout();
+
+    toast({
+      variant: "destructive",
+      description: message,
+    });
+
+    if (callbackUrl) {
+      router.push({
+        pathname: "/auth/login",
+        query: { callbackUrl },
+      });
+    } else {
+      router.push("/auth/login");
+    }
+  }
+
+  async function handleDeleteToken(token, callbackUrl) {
+    try {
+      const resLogout = await logoutUser(token);
+      if (resLogout.status === 200) {
+        await handleLogout(callbackUrl, "Please log in again.");
+      }
+    } catch (err) {
+      if (err.status === 401) {
+        await handleLogout(callbackUrl, "Token not valid. Please log in again.");
       }
     }
+  }
 
+  useEffect(() => {
     async function checkAccess() {
       setLoading(true);
       console.log("AuthContext executed!");
@@ -131,14 +131,14 @@ export const AuthProvider = ({ children }) => {
                 if (encryptedData) {
                   const decryptedData = decryptData(encryptedData);
                   const token = decryptedData.token;
-                  handleDeleteToken(token, null);
+                  await handleDeleteToken(token, null);
                 }
               } else if (resToken.status === 200) {
                 const token = resToken?.data.token;
                 const encryptedData = localStorage.getItem("encryptedData") ?? null;
 
                 if (!encryptedData) {
-                  handleDeleteToken(token, callbackUrl);
+                  await handleDeleteToken(token, callbackUrl);
                 } else {
                   const decryptedData = decryptData(encryptedData);
                   const ipChanged = decryptedData.ip != ip;

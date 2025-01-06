@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
 import useAuth from "@/configs/api/auth";
 import { useAuthContext } from "@/contexts/AuthContext";
+import IsAdmin from "@/hoc/IsAdmin";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -56,6 +57,11 @@ export default function TestingPage() {
         ) : (
           <>
             <span>Name : {user?.name ?? "null"}</span>
+
+            <IsAdmin>
+              <span>IS ADMIN</span>
+            </IsAdmin>
+
             <Button onClick={handleLogout} disabled={loading}>
               {loading ? "Loading" : "Logout"}
             </Button>
