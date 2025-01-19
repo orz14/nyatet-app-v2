@@ -5,7 +5,7 @@ export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const token = req.cookies.get("token");
 
-  const protectedPaths = ["/testing"];
+  const protectedPaths = ["/todo"];
   const isProtectedRoute = protectedPaths.some((path) => url.pathname.startsWith(path));
 
   if (isProtectedRoute && !token) {
@@ -15,7 +15,7 @@ export function middleware(req: NextRequest) {
   }
 
   if (url.pathname.startsWith("/auth") && token) {
-    url.pathname = "/testing";
+    url.pathname = "/todo";
     return NextResponse.redirect(url);
   }
 

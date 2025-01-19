@@ -13,14 +13,15 @@ import * as Yup from "yup";
 import { Loader2 } from "lucide-react";
 import useAuth from "@/configs/api/auth";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { sanitizeInput } from "@/utils/sanitizeInput";
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
   const { login: setLogin } = useAuthContext();
   const usernameRef = useRef<HTMLInputElement | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const callbackUrl = router.query?.callbackUrl as string | undefined;
 
   useEffect(() => {
@@ -34,8 +35,12 @@ export default function LoginPage() {
       remember: false,
     },
     validationSchema: Yup.object().shape({
-      username: Yup.string().required("Username is required"),
-      password: Yup.string().required("Password is required"),
+      username: Yup.string()
+        .transform((value) => sanitizeInput(value))
+        .required("Username is required"),
+      password: Yup.string()
+        .transform((value) => sanitizeInput(value))
+        .required("Password is required"),
     }),
     validateOnMount: true,
     onSubmit: async (credentials) => {
@@ -45,7 +50,7 @@ export default function LoginPage() {
         const res = await login(credentials);
         if (res.status === 200) {
           await setLogin(res);
-          router.push(callbackUrl ?? "/testing");
+          router.push(callbackUrl ?? "/todo");
         }
       } catch (err) {
         if (err.status === 401) {

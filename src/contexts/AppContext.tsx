@@ -11,10 +11,10 @@ import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 
 type AppContextType = {
   loadingContext: boolean;
-  user: any;
-  login: ((res: any) => Promise<void>) | any;
-  logout: (() => Promise<void>) | any;
-  handleUnauthenticated: (() => void) | any;
+  user: unknown;
+  login: ((res: unknown) => Promise<void>) | unknown;
+  logout: (() => Promise<void>) | unknown;
+  handleUnauthenticated: (() => void) | unknown;
 };
 
 const defaultAppContext = {
@@ -32,6 +32,15 @@ const comfortaa = Comfortaa({
   subsets: ["latin"],
 });
 
+type UserType = {
+  id: number;
+  name: string;
+  username: string;
+  email: string;
+  roleId: number;
+  avatar: string;
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const { toast } = useToast();
@@ -39,11 +48,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { checkConnection } = useServer();
   const { getIp: getUserIp, setToken, getToken, removeToken } = useService();
   const [loading, setLoading] = useState<boolean>(true);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserType | null>(null);
   const [offline, setOffline] = useState<boolean>(false);
   const isOnline = useOnlineStatus();
 
-  async function login(res: any) {
+  type LoginType = {
+    token: string;
+    data: {
+      id: number;
+      name: string;
+      username: string;
+      email: string;
+      role_id: number;
+      avatar: string;
+    };
+  };
+
+  async function login(res: { data: LoginType }) {
     const ip = localStorage.getItem("userIp") ?? null;
     const token = res.data.token;
     const user = {
@@ -70,7 +91,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem("encryptedData");
   }
 
-  function handleUnauthenticated(err: any, url: any) {
+  function handleUnauthenticated(err: { response: { data: { message: string } } }, url: string) {
     if (err.response?.data?.message == "Unauthenticated.") {
       setLoading(true);
       router.push(url);
@@ -82,7 +103,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const ipBefore = localStorage.getItem("userIp") ?? null;
       try {
         const res = await getUserIp();
-        let ipAfter = res?.data.ip;
+        const ipAfter = res?.data.ip;
 
         if (ipBefore != ipAfter) {
           localStorage.setItem("userIp", ipAfter);
@@ -95,7 +116,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
   }
 
-  async function handleLogout(callbackUrl: any, message: any) {
+  async function handleLogout(callbackUrl: string, message: string) {
     await logout();
 
     toast({
@@ -113,7 +134,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
-  async function handleDeleteToken(token: any, callbackUrl: any) {
+  async function handleDeleteToken(token: string, callbackUrl: string) {
     try {
       const resLogout = await logoutUser(token);
       if (resLogout.status === 200) {
@@ -147,7 +168,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 if (encryptedData) {
                   const decryptedData = decryptData(encryptedData);
                   const token = decryptedData.token;
-                  await handleDeleteToken(token, null);
+                  await handleDeleteToken(token, "");
                 }
               } else if (resToken.status === 200) {
                 const token = resToken?.data.token;

@@ -26,6 +26,17 @@ function MenuItem({ href, label }: MenuItemProps) {
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const { loadingContext } = useAuthContext();
 
+  const menu = [
+    {
+      href: "/auth/login",
+      label: "Login",
+    },
+    {
+      href: "/auth/register",
+      label: "Daftar",
+    },
+  ];
+
   return (
     <>
       <main className="w-full min-h-screen bg-gray-950 text-gray-50 flex flex-col items-center justify-center">
@@ -35,8 +46,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           </header>
 
           <nav className="bg-gray-900 rounded-lg p-2 text-[11px] font-normal min-[448px]:text-xs min-[448px]:font-medium flex justify-stretch gap-2 overflow-x-auto">
-            <MenuItem href={"/auth/login"} label={"Login"} />
-            <MenuItem href={"/auth/register"} label={"Daftar"} />
+            {menu.map((item, index) => (
+              <MenuItem key={index} href={item.href} label={item.label} />
+            ))}
           </nav>
 
           {loadingContext ? (
