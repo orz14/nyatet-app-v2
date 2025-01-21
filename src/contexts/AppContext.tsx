@@ -41,7 +41,7 @@ type UserType = {
   avatar: string;
 };
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const { toast } = useToast();
   const { logout: logoutUser } = useAuth();
@@ -263,7 +263,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 export const useAppContext = () => {
   const context = useContext(AppContext);
   if (!context) {
-    throw new Error("useAppContext must be used within an AuthProvider");
+    throw new Error("useAppContext must be used within an AppProvider");
   }
   return context;
 };

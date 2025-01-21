@@ -2,10 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Toaster } from "../ui/toaster";
-import { useAuthContext } from "@/contexts/AuthContext";
 import Card from "../Card";
 import { Loader2 } from "lucide-react";
 import EachUtils from "@/utils/EachUtils";
+import { useAppContext } from "@/contexts/AppContext";
 
 type MenuItemProps = {
   href?: string;
@@ -25,7 +25,7 @@ function MenuItem({ href, label }: MenuItemProps) {
 }
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
-  const { loadingContext } = useAuthContext();
+  const { loadingContext } = useAppContext();
 
   const menu = [
     {

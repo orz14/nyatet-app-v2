@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/toaster";
 import useAuth from "@/configs/api/auth";
-import { useAuthContext } from "@/contexts/AuthContext";
+import { useAppContext } from "@/contexts/AppContext";
 import IsAdmin from "@/hoc/IsAdmin";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
 export default function TodoPage() {
-  const { loadingContext, user, logout: logoutAuth } = useAuthContext();
+  const { loadingContext, user, logout: logoutAuth } = useAppContext();
   const router = useRouter();
   const { toast } = useToast();
   const { logout: logoutUser } = useAuth();

@@ -12,13 +12,13 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Loader2 } from "lucide-react";
 import useAuth from "@/configs/api/auth";
-import { useAuthContext } from "@/contexts/AuthContext";
 import { sanitizeInput } from "@/utils/sanitizeInput";
+import { useAppContext } from "@/contexts/AppContext";
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const { login: setLogin } = useAuthContext();
+  const { login: setLogin } = useAppContext();
   const usernameRef = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
