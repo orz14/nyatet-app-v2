@@ -134,7 +134,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
-  async function handleDeleteToken(token: string, callbackUrl: string) {
+  async function handleDeleteToken(token: string, callbackUrl: string | any) {
     try {
       const resLogout = await logoutUser(token);
       if (resLogout.status === 200) {
@@ -168,7 +168,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
                 if (encryptedData) {
                   const decryptedData = decryptData(encryptedData);
                   const token = decryptedData.token;
-                  await handleDeleteToken(token, "");
+                  await handleDeleteToken(token, null);
                 }
               } else if (resToken.status === 200) {
                 const token = resToken?.data.token;
