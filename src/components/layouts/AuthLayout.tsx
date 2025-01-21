@@ -47,10 +47,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           </header>
 
           <nav className="bg-gray-900 rounded-lg p-2 text-[11px] font-normal min-[448px]:text-xs min-[448px]:font-medium flex justify-stretch gap-2 overflow-x-auto">
-            <EachUtils of={menu} render={(item: { href: string; label: string }) => <MenuItem href={item.href} label={item.label} />} />
-            {/* {menu.map((item, index) => (
-              <MenuItem key={index} href={item.href} label={item.label} />
-            ))} */}
+            <EachUtils of={menu} render={(item: MenuItemProps, index: number) => <MenuItem key={index} href={item.href} label={item.label} />} />
           </nav>
 
           {loadingContext ? (

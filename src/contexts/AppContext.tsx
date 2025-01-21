@@ -11,10 +11,10 @@ import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 
 type AppContextType = {
   loadingContext: boolean;
-  user: unknown;
-  login: ((res: unknown) => Promise<void>) | unknown;
-  logout: (() => Promise<void>) | unknown;
-  handleUnauthenticated: (() => void) | unknown;
+  user: any;
+  login: ((res: any) => Promise<void>) | any;
+  logout: (() => Promise<void>) | any;
+  handleUnauthenticated: (() => void) | any;
 };
 
 const defaultAppContext = {
@@ -103,7 +103,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const ipBefore = localStorage.getItem("userIp") ?? null;
       try {
         const res = await getUserIp();
-        const ipAfter = res?.data.ip;
+        let ipAfter = res?.data.ip;
 
         if (ipBefore != ipAfter) {
           localStorage.setItem("userIp", ipAfter);
