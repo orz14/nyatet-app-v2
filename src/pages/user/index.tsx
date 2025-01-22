@@ -4,10 +4,11 @@ import AdminCheck from "@/hoc/AdminCheck";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import EachUtils from "@/utils/EachUtils";
 import { useEffect, useState } from "react";
-import useAxiosInterceptors from "@/lib/axios";
+import useUser from "@/configs/api/user";
+import Header from "@/components/dashboard/Header";
+import Pagination from "@/components/dashboard/Pagination";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import CustomBreadcrumb from "@/components/CustomBreadcrumb";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 function UserIndexPage() {
   const title = "User Management";
@@ -19,32 +20,31 @@ function UserIndexPage() {
     },
   ];
 
-  const axiosInstance = useAxiosInterceptors();
-  const baseURL = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api` : "https://nyatet.orzverse.com/api";
-  const [items, setItems] = useState<any>(null);
+  const { getAllUser } = useUser();
+  const [users, setUsers] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  async function fetchData() {
+  async function fetchAllUser(url?: string) {
+    setLoading(true);
     try {
-      const res = await axiosInstance.get(`${baseURL}/user`);
-      setItems(res.data);
+      const res = await getAllUser(url);
+      if (res.status === 200) {
+        setUsers(res.data);
+      }
     } catch (err) {
-      console.log("🚀 ~ fetchData ~ err:", err);
+      console.log("🚀 ~ fetchAllUser ~ err:", err);
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    fetchData();
+    fetchAllUser();
   }, []);
 
   function Loader() {
     return Array.from({ length: 3 }).map((_, index) => (
       <TableRow key={index}>
-        <TableCell className="font-bold text-center">
-          <span className="block h-4 bg-gray-700/30 rounded animate-pulse"></span>
-        </TableCell>
         <TableCell>
           <span className="block h-4 bg-gray-700/30 rounded animate-pulse"></span>
         </TableCell>
@@ -61,24 +61,54 @@ function UserIndexPage() {
     ));
   }
 
+  function getRole(role: string) {
+    return role
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
+
   return (
     <>
       <MetaTag title={title} />
 
       <Layout>
         <div className="space-y-4">
-          <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-4">
-            <div className="flex justify-between items-center gap-4">
-              <h1 className="text-xl font-bold tracking-wider first-letter:text-indigo-400">{title}</h1>
-              <CustomBreadcrumb list={breadcrumb} />
-            </div>
+          <Header
+            title={title}
+            breadcrumb={breadcrumb}
+            Icon={() => (
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+              </svg>
+            )}
+          />
+
+          <div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" className="h-auto p-2" onClick={() => fetchAllUser()} disabled={loading}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                      />
+                    </svg>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Refresh</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
 
           <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-4">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="font-bold text-center">#</TableHead>
                   <TableHead>Username</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
@@ -87,16 +117,22 @@ function UserIndexPage() {
               </TableHeader>
               <TableBody>
                 <EachUtils
-                  of={items?.users}
+                  of={users?.users}
                   isLoading={loading}
                   Loader={Loader}
                   render={(item: any, index: number) => (
                     <TableRow key={index}>
-                      <TableCell className="font-bold text-center">{index + 1}</TableCell>
                       <TableCell>{item.username}</TableCell>
                       <TableCell>{item.name}</TableCell>
                       <TableCell>{item.email}</TableCell>
-                      <TableCell>{item.role_id}</TableCell>
+                      <TableCell>{getRole(item.role.role)}</TableCell>
+                    </TableRow>
+                  )}
+                  Empty={() => (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center">
+                        No data available in table
+                      </TableCell>
                     </TableRow>
                   )}
                 />
@@ -104,14 +140,7 @@ function UserIndexPage() {
             </Table>
           </div>
 
-          <div className="flex justify-between items-center gap-4">
-            <Button variant="outline" disabled={loading}>
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Previous"}
-            </Button>
-            <Button variant="outline" disabled={loading}>
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Next"}
-            </Button>
-          </div>
+          <Pagination actionFunction={fetchAllUser} prevUrl={users?.pagination.prev_page_url} nextUrl={users?.pagination.next_page_url} loading={loading} />
         </div>
       </Layout>
     </>

@@ -103,7 +103,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       const ipBefore = localStorage.getItem("userIp") ?? null;
       try {
         const res = await getUserIp();
-        let ipAfter = res?.data.ip;
+        const ipAfter = res?.data.ip;
 
         if (ipBefore != ipAfter) {
           localStorage.setItem("userIp", ipAfter);
@@ -229,8 +229,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
     checkAccess();
 
-    // const interval = setInterval(checkAccess, 300000);
-    const interval = setInterval(checkAccess, 60000);
+    const interval = setInterval(checkAccess, 300000);
+    // const interval = setInterval(checkAccess, 60000);
 
     return () => clearInterval(interval);
   }, [router, toast]);

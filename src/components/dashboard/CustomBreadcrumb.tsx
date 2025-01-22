@@ -5,7 +5,13 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import EachUtils from "@/utils/EachUtils";
 import { Fragment } from "react";
 
-export default function CustomBreadcrumb({ list }: { list?: any }) {
+type ListType = {
+  isLink: boolean;
+  url: string | null;
+  label: string;
+};
+
+export default function CustomBreadcrumb({ list }: { list?: ListType[] }) {
   return (
     <Breadcrumb>
       <BreadcrumbList>
