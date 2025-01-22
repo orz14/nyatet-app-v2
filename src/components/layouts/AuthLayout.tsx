@@ -54,7 +54,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <Card>
               <div className="flex flex-row items-center justify-center text-xs">
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                <span>Loading</span>
+                <span>Please wait</span>
               </div>
             </Card>
           ) : (

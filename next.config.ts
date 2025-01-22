@@ -12,6 +12,14 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        source: "/forbidden",
+        destination: "/error/forbidden",
+      },
+    ];
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },

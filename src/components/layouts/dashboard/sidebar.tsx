@@ -1,11 +1,39 @@
 import { useAppContext } from "@/contexts/AppContext";
 import IsAdmin from "@/hoc/IsAdmin";
+import EachUtils from "@/utils/EachUtils";
 import Link from "next/link";
 import { useRouter } from "next/router";
+
+type MenuItemProps = {
+  href: string;
+  label: string;
+};
 
 export default function Sidebar() {
   const router = useRouter();
   const { loadingContext } = useAppContext();
+
+  const mainMenu = [
+    {
+      href: "/todo",
+      label: "Todo",
+    },
+    {
+      href: "#",
+      label: "Note",
+    },
+  ];
+
+  const adminMenu = [
+    {
+      href: "#",
+      label: "Role Management",
+    },
+    {
+      href: "/user",
+      label: "User Management",
+    },
+  ];
 
   return (
     <aside className="sticky top-4 left-0 w-[300px] h-max bg-gray-950 border border-gray-900 rounded-lg p-6">
@@ -24,13 +52,15 @@ export default function Sidebar() {
               </svg>
               <span>Main Menu</span>
             </div>
-            <div className="ml-2 mt-3">
-              <Link href={"/todo"} className={`sidebar-menu ${router.pathname == "/todo" && "active"}`}>
-                Todo
-              </Link>
-              <Link href={"#"} className={`sidebar-menu`}>
-                Note
-              </Link>
+            <div className="ml-[9px] mt-3">
+              <EachUtils
+                of={mainMenu}
+                render={(item: MenuItemProps, index: number) => (
+                  <Link key={`mainMenu-${index}`} href={item.href} className={`sidebar-menu ${router.pathname == item.href && "active"}`}>
+                    {item.label}
+                  </Link>
+                )}
+              />
             </div>
           </div>
 
@@ -46,13 +76,15 @@ export default function Sidebar() {
                 </svg>
                 <span>Admin Menu</span>
               </div>
-              <div className="ml-2 mt-3">
-                <Link href={"#"} className={`sidebar-menu`}>
-                  Role Management
-                </Link>
-                <Link href={"/user"} className={`sidebar-menu ${router.pathname == "/user" && "active"}`}>
-                  User Management
-                </Link>
+              <div className="ml-[9px] mt-3">
+                <EachUtils
+                  of={adminMenu}
+                  render={(item: MenuItemProps, index: number) => (
+                    <Link key={`adminMenu-${index}`} href={item.href} className={`sidebar-menu ${router.pathname == item.href && "active"}`}>
+                      {item.label}
+                    </Link>
+                  )}
+                />
               </div>
             </div>
           </IsAdmin>

@@ -1,15 +1,30 @@
 import { Children } from "react";
 
-export default function EachUtils({ of, render }: { of: any[]; render: any }) {
-  if (of?.length == 0) {
-    console.log("Empty data");
-    return null;
-  }
+type EachUtilsType = {
+  of: any[];
+  render: any;
+  isLoading?: boolean;
+  Loader?: any;
+  Empty?: any;
+};
 
+export default function EachUtils({ of, render, isLoading, Loader, Empty }: EachUtilsType) {
   if (typeof render !== "function") {
     console.log("render is not a function");
     return null;
   }
 
-  return Children.toArray(of?.map((item: any, index: number) => render(item, index)));
+  if (isLoading) {
+    return Loader != null ? <Loader /> : null;
+  } else if (of?.length > 0 && !isLoading) {
+    return Children.toArray(of?.map((item: any, index: number) => render(item, index)));
+  } else {
+    return Empty != null ? (
+      <Empty />
+    ) : (
+      <div>
+        <p className="text-center text-gray-500">No Data</p>
+      </div>
+    );
+  }
 }

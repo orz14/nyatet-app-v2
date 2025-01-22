@@ -6,7 +6,7 @@ export default function Footer() {
       <span className="inline max-[475px]:block">
         &copy; 2025{" "}
         <Link href={"/"} className="font-bold hover:underline">
-          Nyatet App
+          {process.env.NEXT_PUBLIC_APP_NAME}
         </Link>
       </span>
       <span className="max-[475px]:hidden"> &#183; </span>
