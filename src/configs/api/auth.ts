@@ -4,9 +4,32 @@ function useAuth() {
   const axiosInstance = useAxiosInterceptors();
   const baseURL = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api` : "https://nyatet.orzverse.com/api";
 
-  async function login(credentials: { username: string; password: string; remember: boolean }) {
+  type LoginType = {
+    username: string;
+    password: string;
+    remember: boolean;
+  };
+
+  async function login(credentials: LoginType) {
     try {
       const res = await axiosInstance.post(`${baseURL}/auth/login`, credentials);
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  type RegisterType = {
+    name: string;
+    username: string;
+    email: string;
+    password: string;
+    password_confirmation: string;
+  };
+
+  async function register(data: RegisterType) {
+    try {
+      const res = await axiosInstance.post(`${baseURL}/auth/register`, data);
       return res;
     } catch (err) {
       throw err;
@@ -32,6 +55,7 @@ function useAuth() {
 
   return {
     login,
+    register,
     logout,
   };
 }

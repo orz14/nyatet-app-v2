@@ -4,56 +4,190 @@ import MetaTag from "@/components/MetaTag";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import useAuth from "@/configs/api/auth";
+import { useAppContext } from "@/contexts/AppContext";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { sanitizeInput } from "@/utils/sanitizeInput";
+import { Loader2 } from "lucide-react";
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const { register } = useAuth();
+  const { login } = useAppContext();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [errName, setErrName] = useState<string | null>(null);
+  const [errUsername, setErrUsername] = useState<string | null>(null);
+  const [errEmail, setErrEmail] = useState<string | null>(null);
+  const [errPassword, setErrPassword] = useState<string | null>(null);
+
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      username: "",
+      email: "",
+      password: "",
+      password_confirmation: "",
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string()
+        .transform((value) => sanitizeInput(value))
+        .required("Nama is required"),
+      username: Yup.string()
+        .transform((value) => sanitizeInput(value))
+        .required("Username is required"),
+      email: Yup.string()
+        .transform((value) => sanitizeInput(value))
+        .required("Email is required"),
+      password: Yup.string()
+        .transform((value) => sanitizeInput(value))
+        .required("Password is required"),
+      password_confirmation: Yup.string()
+        .transform((value) => sanitizeInput(value))
+        .required("Konfirmasi Password is required"),
+    }),
+    validateOnMount: true,
+    onSubmit: async (data) => {
+      setLoading(true);
+      setError(null);
+      setErrName(null);
+      setErrUsername(null);
+      setErrEmail(null);
+      setErrPassword(null);
+
+      try {
+        const res = await register(data);
+        if (res.status === 201) {
+          await login(res);
+          router.push("/todo");
+        }
+      } catch (err) {
+        if (err.status === 500 && err.response.data.type == "login_failed") {
+          setError("Registrasi berhasil namun anda gagal saat login, silahkan coba login kembali.");
+        } else if (err.status === 500 && err.response.data.type == "server_error") {
+          setError(err.response.data.message);
+        } else if (err.status === 422) {
+          if (err.response.data.message.name) {
+            setErrName(err.response.data.message.name[0]);
+          }
+          if (err.response.data.message.username) {
+            setErrUsername(err.response.data.message.username[0]);
+          }
+          if (err.response.data.message.email) {
+            setErrEmail(err.response.data.message.email[0]);
+          }
+          if (err.response.data.message.password) {
+            setErrPassword(err.response.data.message.password[0]);
+          }
+        } else {
+          setError(err.message);
+        }
+
+        setLoading(false);
+      }
+    },
+  });
+
+  const { values, handleSubmit, handleChange, handleBlur, touched, errors } = formik;
+
   return (
     <>
       <MetaTag title={"Register"} />
 
       <AuthLayout>
         <Card>
-          <form className="space-y-4">
+          {error && (
+            <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-3 text-xs text-red-600 text-center mb-4">
+              <span>Error: {error}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
             <div className="grid w-full items-center gap-1.5">
               <Label htmlFor="name" className="text-[11px] font-normal md:font-medium">
                 Nama
               </Label>
-              <Input type="text" id="name" placeholder="Masukkan Nama" />
+              <Input type="text" id="name" name="name" onChange={handleChange} onBlur={handleBlur} value={values.name} placeholder="Masukkan Nama" className={(errors.name && touched.name) || errName ? "border-red-600" : ""} />
+              {((errors.name && touched.name) || errName) && <span className="block text-xs text-red-600">{errors.name || errName}</span>}
             </div>
 
             <div className="grid w-full items-center gap-1.5">
               <Label htmlFor="username" className="text-[11px] font-normal md:font-medium">
                 Username
               </Label>
-              <Input type="text" id="username" placeholder="Masukkan Username" />
+              <Input
+                type="text"
+                id="username"
+                name="username"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.username}
+                placeholder="Masukkan Username"
+                className={(errors.username && touched.username) || errUsername ? "border-red-600" : ""}
+              />
+              {((errors.username && touched.username) || errUsername) && <span className="block text-xs text-red-600">{errors.username || errUsername}</span>}
             </div>
 
             <div className="grid w-full items-center gap-1.5">
               <Label htmlFor="email" className="text-[11px] font-normal md:font-medium">
                 Email
               </Label>
-              <Input type="email" id="email" placeholder="Masukkan Email" />
+              <Input type="email" id="email" name="email" onChange={handleChange} onBlur={handleBlur} value={values.email} placeholder="Masukkan Email" className={(errors.email && touched.email) || errEmail ? "border-red-600" : ""} />
+              {((errors.email && touched.email) || errEmail) && <span className="block text-xs text-red-600">{errors.email || errEmail}</span>}
             </div>
 
             <div className="grid w-full items-center gap-1.5">
               <Label htmlFor="password" className="text-[11px] font-normal md:font-medium">
                 Password
               </Label>
-              <Input type="password" id="password" placeholder="Masukkan Password" />
+              <Input
+                type="password"
+                id="password"
+                name="password"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.password}
+                placeholder="Masukkan Password"
+                className={(errors.password && touched.password) || errPassword ? "border-red-600" : ""}
+              />
+              {((errors.password && touched.password) || errPassword) && <span className="block text-xs text-red-600">{errors.password || errPassword}</span>}
             </div>
 
             <div className="grid w-full items-center gap-1.5">
               <Label htmlFor="password_confirmation" className="text-[11px] font-normal md:font-medium">
                 Konfirmasi Password
               </Label>
-              <Input type="password" id="password_confirmation" placeholder="Konfirmasi Password" />
+              <Input
+                type="password"
+                id="password_confirmation"
+                name="password_confirmation"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.password_confirmation}
+                placeholder="Konfirmasi Password"
+                className={errors.password_confirmation && touched.password_confirmation ? "border-red-600" : ""}
+              />
+              {errors.password_confirmation && touched.password_confirmation && <span className="block text-xs text-red-600">{errors.password_confirmation}</span>}
             </div>
 
             <div>
-              <Button type="submit" className="w-full text-[12px] bg-indigo-600 text-white hover:bg-indigo-800">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
-                </svg>
-                <span>Daftar</span>
+              <Button type="submit" className="w-full text-[12px] bg-indigo-600 text-white hover:bg-indigo-800" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Please wait
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
+                    </svg>
+                    <span>Daftar</span>
+                  </>
+                )}
               </Button>
             </div>
           </form>
