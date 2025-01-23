@@ -1,3 +1,4 @@
+import TextSkeleton from "@/components/skeleton/TextSkeleton";
 import { useAppContext } from "@/contexts/AppContext";
 import IsAdmin from "@/hoc/IsAdmin";
 import EachUtils from "@/utils/EachUtils";
@@ -39,9 +40,9 @@ export default function Sidebar() {
     <aside className="sticky top-4 left-0 w-[300px] h-max bg-gray-950 border border-gray-900 rounded-lg p-6">
       {loadingContext ? (
         <div className="space-y-2">
-          <div className="w-2/3 h-4 bg-gray-700/30 rounded animate-pulse"></div>
-          <div className="w-full h-4 bg-gray-700/30 rounded animate-pulse"></div>
-          <div className="w-full h-4 bg-gray-700/30 rounded animate-pulse"></div>
+          <TextSkeleton width="w-2/3" />
+          <TextSkeleton />
+          <TextSkeleton />
         </div>
       ) : (
         <>

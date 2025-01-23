@@ -7,8 +7,11 @@ import { useEffect, useState } from "react";
 import useUser from "@/configs/api/user";
 import Header from "@/components/dashboard/Header";
 import Pagination from "@/components/dashboard/Pagination";
+import RefreshDataButton from "@/components/dashboard/RefreshDataButton";
+import { roleNameFormat } from "@/hooks/useFormatter";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import TextSkeleton from "@/components/skeleton/TextSkeleton";
 
 function UserIndexPage() {
   const title = "User Management";
@@ -46,26 +49,22 @@ function UserIndexPage() {
     return Array.from({ length: 3 }).map((_, index) => (
       <TableRow key={index}>
         <TableCell>
-          <span className="block h-4 bg-gray-700/30 rounded animate-pulse"></span>
+          <TextSkeleton />
         </TableCell>
         <TableCell>
-          <span className="block h-4 bg-gray-700/30 rounded animate-pulse"></span>
+          <TextSkeleton />
         </TableCell>
         <TableCell>
-          <span className="block h-4 bg-gray-700/30 rounded animate-pulse"></span>
+          <TextSkeleton />
         </TableCell>
         <TableCell>
-          <span className="block h-4 bg-gray-700/30 rounded animate-pulse"></span>
+          <TextSkeleton />
+        </TableCell>
+        <TableCell>
+          <TextSkeleton />
         </TableCell>
       </TableRow>
     ));
-  }
-
-  function getRole(role: string) {
-    return role
-      .split("-")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
   }
 
   return (
@@ -85,24 +84,7 @@ function UserIndexPage() {
           />
 
           <div>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" className="h-auto p-2" onClick={() => fetchAllUser()} disabled={loading}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
-                      />
-                    </svg>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Refresh</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <RefreshDataButton actionFunction={fetchAllUser} loading={loading} />
           </div>
 
           <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-4">
@@ -113,6 +95,7 @@ function UserIndexPage() {
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Role</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -125,12 +108,27 @@ function UserIndexPage() {
                       <TableCell>{item.username}</TableCell>
                       <TableCell>{item.name}</TableCell>
                       <TableCell>{item.email}</TableCell>
-                      <TableCell>{getRole(item.role.role)}</TableCell>
+                      <TableCell>{roleNameFormat(item.role.role)}</TableCell>
+                      <TableCell className="text-center">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant={"outline"} size={"icon"} className="bg-indigo-950/40 border-indigo-950/90">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                              </svg>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuItem>Edit</DropdownMenuItem>
+                            <DropdownMenuItem>Delete</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
                     </TableRow>
                   )}
                   Empty={() => (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center">
+                      <TableCell colSpan={5} className="text-center">
                         No data available in table
                       </TableCell>
                     </TableRow>

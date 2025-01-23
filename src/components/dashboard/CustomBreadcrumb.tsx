@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import EachUtils from "@/utils/EachUtils";
 import { Fragment } from "react";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "../ui/breadcrumb";
+import EachUtils from "@/utils/EachUtils";
 
 type ListType = {
   isLink: boolean;
