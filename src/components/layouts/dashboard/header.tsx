@@ -10,26 +10,14 @@ import useAuth from "@/configs/api/auth";
 import MainLoader from "@/components/loader/MainLoader";
 import { useState } from "react";
 import IsAdmin from "@/hoc/IsAdmin";
+import logoutUtils from "@/utils/logoutUtils";
 
 export default function Header() {
-  const { loadingContext, user, logout: logoutAuth } = useAppContext();
+  const { loadingContext, user, logout } = useAppContext();
   const router = useRouter();
   const { toast } = useToast();
   const { logout: logoutUser } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
-
-  async function logout(notification = false) {
-    await logoutAuth();
-
-    if (notification) {
-      toast({
-        variant: "destructive",
-        description: "Token not valid.",
-      });
-    }
-
-    router.push("/auth/login");
-  }
 
   async function handleLogout() {
     setLoading(true);
@@ -37,11 +25,11 @@ export default function Header() {
     try {
       const res = await logoutUser();
       if (res.status === 200) {
-        await logout();
+        await logoutUtils(logout, toast, router);
       }
     } catch (err) {
       if (err.status === 401) {
-        await logout(true);
+        await logoutUtils(logout, toast, router, true);
       } else {
         toast({
           variant: "destructive",

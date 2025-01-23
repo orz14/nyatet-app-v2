@@ -12,6 +12,10 @@ import { roleNameFormat } from "@/hooks/useFormatter";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import TextSkeleton from "@/components/skeleton/TextSkeleton";
+import logoutUtils from "@/utils/logoutUtils";
+import { useAppContext } from "@/contexts/AppContext";
+import { useRouter } from "next/router";
+import { useToast } from "@/hooks/use-toast";
 
 function UserIndexPage() {
   const title = "User Management";
@@ -23,6 +27,9 @@ function UserIndexPage() {
     },
   ];
 
+  const { logout } = useAppContext();
+  const router = useRouter();
+  const { toast } = useToast();
   const { getAllUser } = useUser();
   const [users, setUsers] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -35,7 +42,9 @@ function UserIndexPage() {
         setUsers(res.data);
       }
     } catch (err) {
-      console.log("🚀 ~ fetchAllUser ~ err:", err);
+      if (err.status === 401) {
+        await logoutUtils(logout, toast, router, true);
+      }
     } finally {
       setLoading(false);
     }

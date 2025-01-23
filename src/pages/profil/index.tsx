@@ -1,13 +1,11 @@
 import Header from "@/components/dashboard/Header";
+import RiwayatLogin from "@/components/dashboard/profil/RiwayatLogin";
 import Layout from "@/components/layouts/dashboard/layout";
 import MetaTag from "@/components/MetaTag";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAppContext } from "@/contexts/AppContext";
-import { LogOut } from "lucide-react";
 
 export default function ProfilPage() {
   const title = "Profil";
@@ -127,46 +125,7 @@ export default function ProfilPage() {
             </div>
           </div>
 
-          <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-4 space-y-4">
-            <div className="w-full bg-gray-950 border border-indigo-900/60 rounded-lg p-4">
-              <div className="flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"
-                  />
-                </svg>
-                <span>Riwayat Login</span>
-              </div>
-            </div>
-
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>IP Address</TableHead>
-                  <TableHead>User Agent</TableHead>
-                  <TableHead>Lokasi</TableHead>
-                  <TableHead>Terakhir Digunakan</TableHead>
-                  <TableHead></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell>Data 1</TableCell>
-                  <TableCell>Data 2</TableCell>
-                  <TableCell>Data 3</TableCell>
-                  <TableCell>Data 4</TableCell>
-                  <TableCell className="text-center">
-                    <Button variant={"outline"} size={"sm"} className="border-red-950/70 bg-red-950/50 hover:bg-red-950/70">
-                      <LogOut />
-                      <span>Log out</span>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </div>
+          <RiwayatLogin />
 
           <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-4 space-y-4">
             <div className="w-full bg-gray-950 border border-indigo-900/60 rounded-lg p-4">
