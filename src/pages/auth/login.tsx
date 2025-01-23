@@ -22,6 +22,8 @@ export default function LoginPage() {
   const usernameRef = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [errUsername, setErrUsername] = useState<string | null>(null);
+  const [errPassword, setErrPassword] = useState<string | null>(null);
   const callbackUrl = router.query?.callbackUrl as string | undefined;
 
   useEffect(() => {
@@ -45,6 +47,9 @@ export default function LoginPage() {
     validateOnMount: true,
     onSubmit: async (credentials) => {
       setLoading(true);
+      setError(null);
+      setErrUsername(null);
+      setErrPassword(null);
 
       try {
         const res = await login(credentials);
@@ -55,6 +60,13 @@ export default function LoginPage() {
       } catch (err) {
         if (err.status === 401) {
           setError(err.response.data.message);
+        } else if (err.status === 422) {
+          if (err.response.data.message.username) {
+            setErrUsername(err.response.data.message.username[0]);
+          }
+          if (err.response.data.message.password) {
+            setErrPassword(err.response.data.message.password[0]);
+          }
         } else {
           setError(err.message);
         }
@@ -92,9 +104,9 @@ export default function LoginPage() {
                 onBlur={handleBlur}
                 value={values.username}
                 placeholder="Masukkan Username"
-                className={errors.username && touched.username ? "border-red-600" : ""}
+                className={(errors.username && touched.username) || errUsername ? "border-red-600" : ""}
               />
-              {errors.username && touched.username && <span className="block text-xs text-red-600">{errors.username}</span>}
+              {((errors.username && touched.username) || errUsername) && <span className="block text-xs text-red-600">{errors.username || errUsername}</span>}
             </div>
 
             <div className="grid w-full items-center gap-1.5">
@@ -109,9 +121,9 @@ export default function LoginPage() {
                 onBlur={handleBlur}
                 value={values.password}
                 placeholder="Masukkan Password"
-                className={errors.password && touched.password ? "border-red-600" : ""}
+                className={(errors.password && touched.password) || errPassword ? "border-red-600" : ""}
               />
-              {errors.password && touched.password && <span className="block text-xs text-red-600">{errors.password}</span>}
+              {((errors.password && touched.password) || errPassword) && <span className="block text-xs text-red-600">{errors.password || errPassword}</span>}
             </div>
 
             <div className="block min-[260px]:flex min-[260px]:flex-row min-[260px]:items-center min-[260px]:justify-between text-[11px] md:text-xs">
