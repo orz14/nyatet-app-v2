@@ -5,7 +5,7 @@ export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const token = req.cookies.get("token");
 
-  const protectedPaths = ["/todo", "/user"];
+  const protectedPaths = ["/todo", "/user", "/profil"];
   const isProtectedRoute = protectedPaths.some((path) => url.pathname.startsWith(path));
 
   if (isProtectedRoute && !token) {

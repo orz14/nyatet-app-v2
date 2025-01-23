@@ -12,7 +12,7 @@ export default function Footer() {
       <span className="max-[475px]:hidden"> &#183; </span>
       <span className="inline max-[475px]:block">
         Created with 💜 by{" "}
-        <Link href={"#"} className="font-bold hover:underline" target="_blank">
+        <Link href={"https://orzverse.com"} className="font-bold hover:underline" target="_blank">
           ORZCODE
         </Link>
       </span>

@@ -82,9 +82,9 @@ export default function Header() {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56">
             <DropdownMenuGroup>
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/profil")}>
                 <User />
-                <span>Profile</span>
+                <span>Profil</span>
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer" onClick={() => window.open("https://github.com/orz14/nyatet-app", "_blank")}>
                 <Github />
