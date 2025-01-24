@@ -10,14 +10,15 @@ import useAuth from "@/configs/api/auth";
 import MainLoader from "@/components/loader/MainLoader";
 import { useState } from "react";
 import IsAdmin from "@/hoc/IsAdmin";
-import logoutUtils from "@/utils/logoutUtils";
+import useLogout from "@/hooks/useLogout";
 
 export default function Header() {
-  const { loadingContext, user, logout } = useAppContext();
+  const { loadingContext, user } = useAppContext();
   const router = useRouter();
   const { toast } = useToast();
   const { logout: logoutUser } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
+  const { logoutAuth } = useLogout();
 
   async function handleLogout() {
     setLoading(true);
@@ -25,11 +26,11 @@ export default function Header() {
     try {
       const res = await logoutUser();
       if (res.status === 200) {
-        await logoutUtils(logout, toast, router);
+        await logoutAuth();
       }
     } catch (err) {
       if (err.status === 401) {
-        await logoutUtils(logout, toast, router, true);
+        await logoutAuth(true);
       } else {
         toast({
           variant: "destructive",

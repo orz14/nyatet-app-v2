@@ -8,14 +8,11 @@ import useUser from "@/configs/api/user";
 import Header from "@/components/dashboard/Header";
 import Pagination from "@/components/dashboard/Pagination";
 import RefreshDataButton from "@/components/dashboard/RefreshDataButton";
-import { roleNameFormat } from "@/hooks/useFormatter";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import TextSkeleton from "@/components/skeleton/TextSkeleton";
-import logoutUtils from "@/utils/logoutUtils";
-import { useAppContext } from "@/contexts/AppContext";
-import { useRouter } from "next/router";
-import { useToast } from "@/hooks/use-toast";
+import useLogout from "@/hooks/useLogout";
+import { roleNameFormat } from "@/utils/formatters";
 
 function UserIndexPage() {
   const title = "User Management";
@@ -27,10 +24,8 @@ function UserIndexPage() {
     },
   ];
 
-  const { logout } = useAppContext();
-  const router = useRouter();
-  const { toast } = useToast();
   const { getAllUser } = useUser();
+  const { logoutAuth } = useLogout();
   const [users, setUsers] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -43,7 +38,7 @@ function UserIndexPage() {
       }
     } catch (err) {
       if (err.status === 401) {
-        await logoutUtils(logout, toast, router, true);
+        await logoutAuth(true);
       }
     } finally {
       setLoading(false);

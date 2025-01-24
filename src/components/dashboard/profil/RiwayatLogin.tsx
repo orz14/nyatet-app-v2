@@ -2,20 +2,19 @@ import TextSkeleton from "@/components/skeleton/TextSkeleton";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import useLoginLog from "@/configs/api/login-log";
-import { useAppContext } from "@/contexts/AppContext";
 import { useToast } from "@/hooks/use-toast";
-import { timeFormat } from "@/hooks/useFormatter";
+import useLogout from "@/hooks/useLogout";
 import EachUtils from "@/utils/EachUtils";
-import logoutUtils from "@/utils/logoutUtils";
+import { timeFormat } from "@/utils/formatters";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 export default function RiwayatLogin() {
-  const { logout } = useAppContext();
   const router = useRouter();
   const { toast } = useToast();
   const { tokenInfo, getLoginLog, logoutToken } = useLoginLog();
+  const { logoutAuth } = useLogout();
   const [tokenName, setTokenName] = useState<any>(null);
   const [logs, setLogs] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -29,7 +28,7 @@ export default function RiwayatLogin() {
       }
     } catch (err) {
       if (err.status === 401) {
-        await logoutUtils(logout, toast, router, true);
+        await logoutAuth(true);
       }
     }
   }
@@ -51,7 +50,7 @@ export default function RiwayatLogin() {
   useEffect(() => {
     fetchTokenName();
     fetchLoginLog();
-  }, []);
+  }, [router]);
 
   function Loader() {
     return Array.from({ length: 3 }).map((_, index) => (
@@ -88,7 +87,7 @@ export default function RiwayatLogin() {
       }
     } catch (err) {
       if (err.status === 401) {
-        await logoutUtils(logout, toast, router, true);
+        await logoutAuth(true);
       }
     } finally {
       setLoadingLogout(false);
