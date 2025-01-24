@@ -51,7 +51,7 @@ function UserIndexPage() {
 
   function Loader() {
     return Array.from({ length: 3 }).map((_, index) => (
-      <TableRow key={index}>
+      <TableRow key={`loader-user-${index}`}>
         <TableCell>
           <TextSkeleton />
         </TableCell>
@@ -112,7 +112,7 @@ function UserIndexPage() {
                   isLoading={loading}
                   Loader={Loader}
                   render={(item: any, index: number) => (
-                    <TableRow key={index}>
+                    <TableRow key={`user-${index}`}>
                       <TableCell>{item.username}</TableCell>
                       <TableCell>{item.name}</TableCell>
                       <TableCell>{item.email}</TableCell>

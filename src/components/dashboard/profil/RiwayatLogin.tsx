@@ -54,7 +54,7 @@ export default function RiwayatLogin() {
 
   function Loader() {
     return Array.from({ length: 3 }).map((_, index) => (
-      <TableRow key={index}>
+      <TableRow key={`loader-login-log-${index}`}>
         <TableCell>
           <TextSkeleton />
         </TableCell>
@@ -88,6 +88,18 @@ export default function RiwayatLogin() {
     } catch (err) {
       if (err.status === 401) {
         await logoutAuth(true);
+      } else if (err.status === 404 || err.status === 403 || err.status === 500) {
+        toast({
+          variant: "default",
+          description: err.response.data.message,
+        });
+        await fetchLoginLog();
+      } else {
+        toast({
+          variant: "default",
+          description: err.message,
+        });
+        await fetchLoginLog();
       }
     } finally {
       setLoadingLogout(false);
@@ -121,7 +133,7 @@ export default function RiwayatLogin() {
             isLoading={loading}
             Loader={Loader}
             render={(item: any, index: number) => (
-              <TableRow key={index}>
+              <TableRow key={`login-log-${index}`}>
                 <TableCell className="whitespace-nowrap">{item.ip_address}</TableCell>
                 <TableCell>{item.user_agent}</TableCell>
                 <TableCell>{item.city ? item.city + ", " + item.region + ", " + item.country : "-"}</TableCell>
