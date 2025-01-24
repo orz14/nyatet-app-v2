@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { decryptData, encryptData } from "@/lib/crypto";
 import { Comfortaa } from "next/font/google";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
+import { Toaster } from "@/components/ui/toaster";
 
 type AppContextType = {
   loadingContext: boolean;
@@ -255,6 +256,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         >
           {children}
         </div>
+        <Toaster />
       </div>
     </AppContext.Provider>
   );

@@ -9,6 +9,7 @@ import { timeFormat } from "@/utils/formatters";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import ConfirmationDialog from "../ConfirmationDialog";
 
 export default function RiwayatLogin() {
   const router = useRouter();
@@ -140,10 +141,17 @@ export default function RiwayatLogin() {
                 <TableCell className="whitespace-nowrap">{item.token_name == tokenName ? <span className="text-green-600">Sesi Saat Ini</span> : item.token.last_used_at ? timeFormat(item.token.last_used_at) : "-"}</TableCell>
                 <TableCell className="text-center">
                   {item.token_name != tokenName && (
-                    <Button variant={"outline"} size={"sm"} className="border-red-950/70 bg-red-950/50 hover:bg-red-950/70" onClick={() => handleLogoutToken(item.token_name)} disabled={loadingLogout}>
-                      <LogOut />
-                      <span>Log out</span>
-                    </Button>
+                    <ConfirmationDialog
+                      trigger={
+                        <Button variant={"outline"} size={"sm"} className="border-red-950/70 bg-red-950/50 hover:bg-red-950/70" disabled={loadingLogout}>
+                          <LogOut />
+                          <span>Log out</span>
+                        </Button>
+                      }
+                      title={"Apakah kamu yakin?"}
+                      description={"Tindakan ini tidak dapat dibatalkan. Tindakan ini akan mengeluarkan akun yang berada di perangkat lain."}
+                      actionFunction={() => handleLogoutToken(item.token_name)}
+                    />
                   )}
                 </TableCell>
               </TableRow>
