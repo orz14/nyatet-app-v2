@@ -20,7 +20,7 @@ export default function Sidebar() {
       label: "Todo",
     },
     {
-      href: "#",
+      href: "/note",
       label: "Note",
     },
   ];

@@ -1,10 +1,10 @@
 import Layout from "@/components/layouts/dashboard/layout";
 import MetaTag from "@/components/MetaTag";
 
-export default function TodoIndexPage() {
+export default function NoteIndexPage() {
   return (
     <>
-      <MetaTag title={"Todo"} />
+      <MetaTag title={"Note"} />
 
       <Layout>
         <div className="w-full flex justify-center items-center gap-x-2 animate-pulse">

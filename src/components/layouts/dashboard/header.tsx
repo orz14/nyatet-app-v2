@@ -58,10 +58,10 @@ export default function Header() {
               ) : (
                 <>
                   {user?.avatar != null ? (
-                    <img src={user?.avatar} alt="avatar" className="size-7 rounded-full bg-indigo-950 object-cover" />
+                    <img src={user?.avatar} alt={user?.name} className="size-7 rounded-full bg-indigo-950 object-cover" />
                   ) : (
-                    <div className="flex justify-center items-center size-7 rounded-full bg-indigo-950">
-                      <User />
+                    <div className="flex justify-center items-center text-[14px] leading-[0] size-7 rounded-full bg-indigo-950 overflow-hidden">
+                      <span>{user?.name[0]}</span>
                     </div>
                   )}
                   <span className="max-w-[230px] truncate">{user?.name}</span>
