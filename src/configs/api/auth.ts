@@ -2,7 +2,7 @@ import useAxiosInterceptors from "@/lib/axios";
 
 function useAuth() {
   const axiosInstance = useAxiosInterceptors();
-  const baseURL = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api` : "https://be-nyatet.orzverse.com/api";
+  const baseURL = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth` : "https://be-nyatet.orzverse.com/api/auth";
 
   type LoginType = {
     username: string;
@@ -12,7 +12,7 @@ function useAuth() {
 
   async function login(credentials: LoginType) {
     try {
-      const res = await axiosInstance.post(`${baseURL}/auth/login`, credentials);
+      const res = await axiosInstance.post(`${baseURL}/login`, credentials);
       return res;
     } catch (err) {
       throw err;
@@ -29,7 +29,7 @@ function useAuth() {
 
   async function register(data: RegisterType) {
     try {
-      const res = await axiosInstance.post(`${baseURL}/auth/register`, data);
+      const res = await axiosInstance.post(`${baseURL}/register`, data);
       return res;
     } catch (err) {
       throw err;
@@ -46,7 +46,32 @@ function useAuth() {
       : {};
 
     try {
-      const res = await axiosInstance.delete(`${baseURL}/auth/logout`, config);
+      const res = await axiosInstance.delete(`${baseURL}/logout`, config);
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async function resetPassword(credential: { email: string }) {
+    try {
+      const res = await axiosInstance.post(`${baseURL}/reset-password`, credential);
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  type NewPasswordType = {
+    email: string;
+    password: string;
+    password_confirmation: string;
+    token: string;
+  };
+
+  async function newPassword(credentials: NewPasswordType) {
+    try {
+      const res = await axiosInstance.post(`${baseURL}/new-password`, credentials);
       return res;
     } catch (err) {
       throw err;
@@ -57,6 +82,8 @@ function useAuth() {
     login,
     register,
     logout,
+    resetPassword,
+    newPassword,
   };
 }
 

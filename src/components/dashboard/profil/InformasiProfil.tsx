@@ -20,11 +20,6 @@ export default function InformasiProfil() {
   const [errName, setErrName] = useState<string | null>(null);
   const [errEmail, setErrEmail] = useState<string | null>(null);
 
-  useEffect(() => {
-    formik.setFieldValue("name", user?.name ?? "");
-    formik.setFieldValue("email", user?.email ?? "");
-  }, [loadingContext]);
-
   type FormikType = {
     name: string;
     email: string;
@@ -91,6 +86,11 @@ export default function InformasiProfil() {
   });
 
   const { values, handleSubmit, handleChange, handleBlur, touched, errors } = formik;
+
+  useEffect(() => {
+    formik.setFieldValue("name", user?.name ?? "");
+    formik.setFieldValue("email", user?.email ?? "");
+  }, [loadingContext]);
 
   return (
     <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-4 space-y-4 hover:border-indigo-900/60 transition-colors duration-300">
