@@ -39,7 +39,7 @@ export default function RiwayatLogin() {
     try {
       const res = await getLoginLog();
       if (res?.status === 200) {
-        setLogs(res.data.logs);
+        setLogs(res?.data.logs);
       }
     } catch (err) {
       console.log("🚀 ~ fetchLoginLog ~ err:", err);
@@ -91,13 +91,13 @@ export default function RiwayatLogin() {
         await logoutAuth(true);
       } else if (err.status === 404 || err.status === 403 || err.status === 500) {
         toast({
-          variant: "default",
+          variant: "destructive",
           description: err.response.data.message,
         });
         await fetchLoginLog();
       } else {
         toast({
-          variant: "default",
+          variant: "destructive",
           description: err.message,
         });
         await fetchLoginLog();
@@ -108,7 +108,7 @@ export default function RiwayatLogin() {
   }
 
   return (
-    <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-4 space-y-4">
+    <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-4 space-y-4 hover:border-indigo-900/60 transition-colors duration-300">
       <div className="w-full bg-gray-950 border border-indigo-900/60 rounded-lg p-4">
         <div className="flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">

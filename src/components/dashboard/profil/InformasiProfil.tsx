@@ -1,13 +1,99 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import useProfile from "@/configs/api/profile";
 import { useAppContext } from "@/contexts/AppContext";
+import { useEffect, useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { sanitizeInput } from "@/utils/sanitizeInput";
+import useLogout from "@/hooks/useLogout";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 export default function InformasiProfil() {
-  const { loadingContext, user } = useAppContext();
+  const { loadingContext, user, updateUser } = useAppContext();
+  const { updateProfile } = useProfile();
+  const { logoutAuth } = useLogout();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [errName, setErrName] = useState<string | null>(null);
+  const [errEmail, setErrEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    formik.setFieldValue("name", user?.name ?? "");
+    formik.setFieldValue("email", user?.email ?? "");
+  }, [loadingContext]);
+
+  type FormikType = {
+    name: string;
+    email: string;
+  };
+
+  const formik = useFormik<FormikType>({
+    initialValues: {
+      name: "",
+      email: "",
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string()
+        .transform((value) => sanitizeInput(value))
+        .required("Nama diperlukan"),
+      email: Yup.string()
+        .transform((value) => sanitizeInput(value))
+        .email("Email tidak valid")
+        .required("Email diperlukan"),
+    }),
+    validateOnMount: true,
+    onSubmit: async (data) => {
+      setLoading(true);
+      setErrName(null);
+      setErrEmail(null);
+
+      try {
+        const res = await updateProfile(data);
+        if (res?.status === 200) {
+          toast({
+            variant: "default",
+            description: res?.data.message,
+          });
+
+          await updateUser({
+            name: values.name,
+            email: values.email,
+          });
+        }
+      } catch (err) {
+        if (err.status === 401) {
+          await logoutAuth(true);
+        } else if (err.status === 422) {
+          if (err.response.data.message.name) {
+            setErrName(err.response.data.message.name[0]);
+          }
+          if (err.response.data.message.email) {
+            setErrEmail(err.response.data.message.email[0]);
+          }
+        } else if (err.status === 500) {
+          toast({
+            variant: "destructive",
+            description: err.response.data.message,
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            description: err.message,
+          });
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
+
+  const { values, handleSubmit, handleChange, handleBlur, touched, errors } = formik;
 
   return (
-    <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-4 space-y-4">
+    <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-4 space-y-4 hover:border-indigo-900/60 transition-colors duration-300">
       <div className="w-full bg-gray-950 border border-indigo-900/60 rounded-lg p-4">
         <div className="flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
@@ -21,31 +107,60 @@ export default function InformasiProfil() {
         </div>
       </div>
 
-      <form className="w-full space-y-4" autoComplete="off">
+      <form onSubmit={handleSubmit} className="w-full space-y-4" autoComplete="off">
         <div className="grid w-full items-center gap-1.5">
           <Label htmlFor="name" className="text-[11px] font-normal md:font-medium">
             Nama
           </Label>
-          <Input type="text" id="name" name="name" className="border-gray-900" value={loadingContext ? "Loading ..." : user?.name} placeholder="Masukkan Nama" disabled={loadingContext} />
+          <Input
+            type="text"
+            id="name"
+            name="name"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={loadingContext ? "Loading ..." : values.name}
+            placeholder="Masukkan Nama"
+            className={`border-gray-900 ${(errors.name && touched.name) || errName ? "!border-red-600" : ""}`}
+            disabled={loadingContext}
+          />
+          {((errors.name && touched.name) || errName) && <span className="block text-xs text-red-600">{errors.name || errName}</span>}
         </div>
 
         <div className="grid w-full items-center gap-1.5">
           <Label htmlFor="username" className="text-[11px] font-normal md:font-medium">
             Username
           </Label>
-          <Input type="text" id="username" name="username" className="border-gray-900" value={loadingContext ? "Loading ..." : user?.username} placeholder="Masukkan Username" disabled={true} />
+          <Input type="text" id="username" name="username" className="border-gray-900" value={loadingContext ? "Loading ..." : user?.username} disabled={true} />
         </div>
 
         <div className="grid w-full items-center gap-1.5">
           <Label htmlFor="email" className="text-[11px] font-normal md:font-medium">
             Email
           </Label>
-          <Input type="email" id="email" name="email" className="border-gray-900" value={loadingContext ? "Loading ..." : user?.email} placeholder="Masukkan Email" disabled={loadingContext} />
+          <Input
+            type="email"
+            id="email"
+            name="email"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={loadingContext ? "Loading ..." : values.email}
+            placeholder="Masukkan Email"
+            className={`border-gray-900 ${(errors.email && touched.email) || errEmail ? "!border-red-600" : ""}`}
+            disabled={loadingContext}
+          />
+          {((errors.email && touched.email) || errEmail) && <span className="block text-xs text-red-600">{errors.email || errEmail}</span>}
         </div>
 
         <div>
-          <Button type="submit" variant={"outline"} className="hover:bg-indigo-950/50" disabled={loadingContext}>
-            Simpan Profil
+          <Button type="submit" variant={"outline"} className="hover:bg-indigo-950/50" disabled={loadingContext || loading}>
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Please wait
+              </>
+            ) : (
+              <span>Simpan Profil</span>
+            )}
           </Button>
         </div>
       </form>

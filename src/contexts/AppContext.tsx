@@ -15,6 +15,7 @@ type AppContextType = {
   user: any;
   login: ((res: any) => Promise<void>) | any;
   logout: (() => Promise<void>) | any;
+  updateUser: (() => Promise<void>) | any;
   handleUnauthenticated: (() => void) | any;
 };
 
@@ -23,6 +24,7 @@ const defaultAppContext = {
   user: null,
   login: null,
   logout: null,
+  updateUser: null,
   handleUnauthenticated: null,
 };
 
@@ -90,6 +92,44 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     await removeToken();
     localStorage.removeItem("userIp");
     localStorage.removeItem("encryptedData");
+  }
+
+  type updateUserType = {
+    name: string;
+    email: string;
+  };
+
+  async function updateUser(data: updateUserType) {
+    const ip = localStorage.getItem("userIp") ?? null;
+    const tokenData = await getToken();
+    const token = tokenData?.data.token;
+    const newData = {
+      id: user?.id,
+      name: data?.name,
+      username: user?.username,
+      email: data?.email,
+      roleId: user?.roleId,
+      avatar: user?.avatar,
+    };
+
+    const newEncryptedData = encryptData({ token, ip, user: newData });
+    if (newEncryptedData) {
+      localStorage.setItem("encryptedData", newEncryptedData);
+    }
+
+    const encryptedData = localStorage.getItem("encryptedData");
+    if (encryptedData) {
+      const decryptedData = decryptData(encryptedData);
+
+      setUser({
+        id: decryptedData.user.id,
+        name: decryptedData.user.name,
+        username: decryptedData.user.username,
+        email: decryptedData.user.email,
+        roleId: decryptedData.user.roleId,
+        avatar: decryptedData.user.avatar,
+      });
+    }
   }
 
   function handleUnauthenticated(err: { response: { data: { message: string } } }, url: string) {
@@ -234,7 +274,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     // const interval = setInterval(checkAccess, 60000);
 
     return () => clearInterval(interval);
-  }, [router, toast]);
+  }, [router]);
 
   return (
     <AppContext.Provider
@@ -243,6 +283,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         user,
         login,
         logout,
+        updateUser,
         handleUnauthenticated,
       }}
     >

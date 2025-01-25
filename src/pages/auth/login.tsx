@@ -30,7 +30,13 @@ export default function LoginPage() {
     usernameRef.current?.focus();
   }, []);
 
-  const formik = useFormik({
+  type FormikType = {
+    username: string;
+    password: string;
+    remember: boolean;
+  };
+
+  const formik = useFormik<FormikType>({
     initialValues: {
       username: "",
       password: "",
@@ -39,10 +45,10 @@ export default function LoginPage() {
     validationSchema: Yup.object().shape({
       username: Yup.string()
         .transform((value) => sanitizeInput(value))
-        .required("Username is required"),
+        .required("Username diperlukan"),
       password: Yup.string()
         .transform((value) => sanitizeInput(value))
-        .required("Password is required"),
+        .required("Password diperlukan"),
     }),
     validateOnMount: true,
     onSubmit: async (credentials) => {
@@ -53,7 +59,7 @@ export default function LoginPage() {
 
       try {
         const res = await login(credentials);
-        if (res.status === 200) {
+        if (res?.status === 200) {
           await setLogin(res);
           router.push(callbackUrl ?? "/todo");
         }

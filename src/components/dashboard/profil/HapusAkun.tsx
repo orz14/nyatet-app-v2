@@ -1,11 +1,61 @@
 import { Button } from "@/components/ui/button";
+import useProfile from "@/configs/api/profile";
+import useService from "@/configs/api/service";
 import { useAppContext } from "@/contexts/AppContext";
+import { useToast } from "@/hooks/use-toast";
+import useLogout from "@/hooks/useLogout";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import ConfirmationDialog from "../ConfirmationDialog";
 
 export default function HapusAkun() {
   const { loadingContext } = useAppContext();
+  const { destroyUser } = useProfile();
+  const { logoutAuth } = useLogout();
+  const { toast } = useToast();
+  const { removeToken } = useService();
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  async function handleDestroy() {
+    setLoading(true);
+
+    try {
+      const res = await destroyUser();
+      if (res?.status === 200) {
+        toast({
+          variant: "default",
+          description: res?.data.message,
+        });
+
+        await removeToken();
+        localStorage.removeItem("userIp");
+        localStorage.removeItem("encryptedData");
+
+        router.push("/auth/login");
+      }
+    } catch (err) {
+      if (err.status === 401) {
+        await logoutAuth(true);
+      } else if (err.status === 500) {
+        toast({
+          variant: "destructive",
+          description: err.response.data.message,
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          description: err.message,
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-4 space-y-4">
+    <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-4 space-y-4 hover:border-indigo-900/60 transition-colors duration-300">
       <div className="w-full bg-gray-950 border border-indigo-900/60 rounded-lg p-4">
         <div className="flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
@@ -22,9 +72,23 @@ export default function HapusAkun() {
       <div>Setelah akun Anda dihapus, semua data akan dihapus secara permanen.</div>
 
       <div>
-        <Button type="submit" variant={"outline"} className="border-red-950/70 bg-red-950/50 hover:bg-red-950/70" disabled={loadingContext}>
-          Hapus Akun
-        </Button>
+        <ConfirmationDialog
+          trigger={
+            <Button type="button" variant={"outline"} className="border-red-950/70 bg-red-950/50 hover:bg-red-950/70" disabled={loadingContext || loading}>
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Please wait
+                </>
+              ) : (
+                <span>Hapus Akun</span>
+              )}
+            </Button>
+          }
+          title={"Apakah kamu yakin?"}
+          description={"Tindakan ini tidak dapat dibatalkan. Tindakan ini akan menghapus semua data secara permanen."}
+          actionFunction={handleDestroy}
+        />
       </div>
     </div>
   );

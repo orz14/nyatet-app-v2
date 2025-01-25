@@ -24,7 +24,15 @@ export default function RegisterPage() {
   const [errEmail, setErrEmail] = useState<string | null>(null);
   const [errPassword, setErrPassword] = useState<string | null>(null);
 
-  const formik = useFormik({
+  type FormikType = {
+    name: string;
+    username: string;
+    email: string;
+    password: string;
+    password_confirmation: string;
+  };
+
+  const formik = useFormik<FormikType>({
     initialValues: {
       name: "",
       username: "",
@@ -35,19 +43,20 @@ export default function RegisterPage() {
     validationSchema: Yup.object().shape({
       name: Yup.string()
         .transform((value) => sanitizeInput(value))
-        .required("Nama is required"),
+        .required("Nama diperlukan"),
       username: Yup.string()
         .transform((value) => sanitizeInput(value))
-        .required("Username is required"),
+        .required("Username diperlukan"),
       email: Yup.string()
         .transform((value) => sanitizeInput(value))
-        .required("Email is required"),
+        .email("Email tidak valid")
+        .required("Email diperlukan"),
       password: Yup.string()
         .transform((value) => sanitizeInput(value))
-        .required("Password is required"),
+        .required("Password diperlukan"),
       password_confirmation: Yup.string()
         .transform((value) => sanitizeInput(value))
-        .required("Konfirmasi Password is required"),
+        .required("Konfirmasi Password diperlukan"),
     }),
     validateOnMount: true,
     onSubmit: async (data) => {
@@ -60,7 +69,7 @@ export default function RegisterPage() {
 
       try {
         const res = await register(data);
-        if (res.status === 201) {
+        if (res?.status === 201) {
           await login(res);
           router.push("/todo");
         }

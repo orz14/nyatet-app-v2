@@ -33,8 +33,8 @@ function UserIndexPage() {
     setLoading(true);
     try {
       const res = await getAllUser(url);
-      if (res.status === 200) {
-        setUsers(res.data);
+      if (res?.status === 200) {
+        setUsers(res?.data);
       }
     } catch (err) {
       if (err.status === 401) {
