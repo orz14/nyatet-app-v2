@@ -2,7 +2,7 @@ import MetaTag from "@/components/MetaTag";
 import useAuth from "@/configs/api/auth";
 import { useAppContext } from "@/contexts/AppContext";
 import { useToast } from "@/hooks/use-toast";
-import useLogout from "@/hooks/useLogout";
+// import useLogout from "@/hooks/useLogout";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -12,7 +12,7 @@ export default function AuthorizationCallbackPage() {
   const { toast } = useToast();
   const { currentUser } = useAuth();
   const { login } = useAppContext();
-  const { logoutAuth } = useLogout();
+  //   const { logoutAuth } = useLogout();
   const callbackUrl = router.query?.callbackUrl as string | undefined;
 
   async function handleLogin(token: string) {
@@ -30,16 +30,22 @@ export default function AuthorizationCallbackPage() {
         router.push(callbackUrl ?? "/todo");
       }
     } catch (err) {
-      if (err.status === 401) {
-        await logoutAuth(true);
-      } else {
-        toast({
-          variant: "destructive",
-          description: err.message,
-        });
+      toast({
+        variant: "destructive",
+        description: err.message,
+      });
 
-        router.push("/auth/login");
-      }
+      router.push("/auth/login");
+      //   if (err.status === 401) {
+      //     await logoutAuth(true);
+      //   } else {
+      //     toast({
+      //       variant: "destructive",
+      //       description: err.message,
+      //     });
+
+      //     router.push("/auth/login");
+      //   }
     }
   }
 
