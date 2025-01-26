@@ -135,8 +135,8 @@ export default function RiwayatLogin() {
             Loader={Loader}
             render={(item: any, index: number) => (
               <TableRow key={`login-log-${index}`}>
-                <TableCell className="whitespace-nowrap">{item.ip_address}</TableCell>
-                <TableCell>{item.user_agent}</TableCell>
+                <TableCell className="whitespace-nowrap">{item.ip_address ?? "-"}</TableCell>
+                <TableCell>{item.user_agent ?? "-"}</TableCell>
                 <TableCell>{item.city ? item.city + ", " + item.region + ", " + item.country : "-"}</TableCell>
                 <TableCell className="whitespace-nowrap">{item.token_name == tokenName ? <span className="text-green-600">Sesi Saat Ini</span> : item.token.last_used_at ? timeFormat(item.token.last_used_at) : "-"}</TableCell>
                 <TableCell className="text-center">

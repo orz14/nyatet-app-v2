@@ -36,6 +36,19 @@ function useAuth() {
     }
   }
 
+  async function currentUser(token: string) {
+    try {
+      const res = await axiosInstance.get(`${baseURL}/current-user`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async function logout(token?: string) {
     const config = token
       ? {
@@ -81,6 +94,7 @@ function useAuth() {
   return {
     login,
     register,
+    currentUser,
     logout,
     resetPassword,
     newPassword,

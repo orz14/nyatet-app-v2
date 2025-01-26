@@ -67,16 +67,16 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     };
   };
 
-  async function login(res: { data: LoginType }) {
+  async function login(credentials: { data: LoginType }) {
     const ip = localStorage.getItem("userIp") ?? null;
-    const token = res.data.token;
+    const token = credentials.data.token;
     const user = {
-      id: res.data.data.id,
-      name: res.data.data.name,
-      username: res.data.data.username,
-      email: res.data.data.email,
-      roleId: res.data.data.role_id,
-      avatar: res.data.data.avatar,
+      id: credentials.data.data.id,
+      name: credentials.data.data.name,
+      username: credentials.data.data.username,
+      email: credentials.data.data.email,
+      roleId: credentials.data.data.role_id,
+      avatar: credentials.data.data.avatar,
     };
 
     await setToken(token);
