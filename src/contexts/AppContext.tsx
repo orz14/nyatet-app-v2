@@ -175,7 +175,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
-  async function handleDeleteToken(token: string, callbackUrl: string | any) {
+  async function handleDeleteToken(token: string, callbackUrl: string | any, debug: any) {
+    console.log(debug);
     try {
       const resLogout = await logoutUser(token);
       if (resLogout.status === 200) {
@@ -209,14 +210,14 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
                 if (encryptedData) {
                   const decryptedData = decryptData(encryptedData);
                   const token = decryptedData.token;
-                  await handleDeleteToken(token, null);
+                  await handleDeleteToken(token, null, "TOKEN KOSONG");
                 }
               } else if (resToken.status === 200) {
                 const token = resToken?.data.token;
                 const encryptedData = localStorage.getItem("encryptedData") ?? null;
 
                 if (!encryptedData) {
-                  await handleDeleteToken(token, callbackUrl);
+                  await handleDeleteToken(token, callbackUrl, "ENCRYPTED DATA KOSONG");
                 } else {
                   const decryptedData = decryptData(encryptedData);
                   const ipChanged = decryptedData.ip != ip;
