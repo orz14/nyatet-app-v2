@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 // import useLogout from "@/hooks/useLogout";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function AuthorizationCallbackPage() {
   const router = useRouter();
@@ -14,8 +14,9 @@ export default function AuthorizationCallbackPage() {
   const { login } = useAppContext();
   //   const { logoutAuth } = useLogout();
   const callbackUrl = router.query?.callbackUrl as string | undefined;
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  async function handleLogin(token: string) {
+  async function handleLogin(token: string, timeoutRef: React.MutableRefObject<NodeJS.Timeout | null>) {
     try {
       const res = await currentUser(token);
       if (res?.status === 200) {
@@ -27,7 +28,9 @@ export default function AuthorizationCallbackPage() {
         };
 
         await login(credentials);
-        router.push(callbackUrl ?? "/todo");
+        timeoutRef.current = setTimeout(() => {
+          router.push(callbackUrl ?? "/todo");
+        }, 3000);
       }
     } catch (err) {
       toast({
@@ -62,8 +65,14 @@ export default function AuthorizationCallbackPage() {
     }
 
     if (token) {
-      handleLogin(token as string);
+      handleLogin(token as string, timeoutRef);
     }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, [router.query]);
 
   return (
