@@ -203,56 +203,58 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
             await getIp();
             const ip = localStorage.getItem("userIp") ?? null;
 
-            try {
-              const resToken = await getToken();
-              if (resToken.status === 204) {
-                const encryptedData = localStorage.getItem("encryptedData") ?? null;
-                if (encryptedData) {
-                  const decryptedData = decryptData(encryptedData);
-                  const token = decryptedData.token;
-                  await handleDeleteToken(token, null, "TOKEN KOSONG");
-                }
-              } else if (resToken.status === 200) {
-                const token = resToken?.data.token;
-                const encryptedData = localStorage.getItem("encryptedData") ?? null;
+            if (router.pathname != "/auth/callback") {
+              try {
+                const resToken = await getToken();
+                if (resToken.status === 204) {
+                  const encryptedData = localStorage.getItem("encryptedData") ?? null;
+                  if (encryptedData) {
+                    const decryptedData = decryptData(encryptedData);
+                    const token = decryptedData.token;
+                    await handleDeleteToken(token, null, "TOKEN KOSONG");
+                  }
+                } else if (resToken.status === 200) {
+                  const token = resToken?.data.token;
+                  const encryptedData = localStorage.getItem("encryptedData") ?? null;
 
-                if (!encryptedData) {
-                  await handleDeleteToken(token, callbackUrl, "ENCRYPTED DATA KOSONG");
-                } else {
-                  const decryptedData = decryptData(encryptedData);
-                  const ipChanged = decryptedData.ip != ip;
-                  const tokenChanged = decryptedData.token != token;
+                  if (!encryptedData) {
+                    await handleDeleteToken(token, callbackUrl, "ENCRYPTED DATA KOSONG");
+                  } else {
+                    const decryptedData = decryptData(encryptedData);
+                    const ipChanged = decryptedData.ip != ip;
+                    const tokenChanged = decryptedData.token != token;
 
-                  if (ipChanged || tokenChanged) {
-                    try {
-                      const resLogout = await logoutUser(token);
+                    if (ipChanged || tokenChanged) {
+                      try {
+                        const resLogout = await logoutUser(token);
 
-                      if (resLogout.status === 200) {
-                        if (ipChanged) {
-                          await handleLogout(callbackUrl, "Your ip address has changed. Please log in again.");
-                        } else if (tokenChanged) {
-                          await handleLogout(callbackUrl, "Your token has changed. Please log in again.");
+                        if (resLogout.status === 200) {
+                          if (ipChanged) {
+                            await handleLogout(callbackUrl, "Your ip address has changed. Please log in again.");
+                          } else if (tokenChanged) {
+                            await handleLogout(callbackUrl, "Your token has changed. Please log in again.");
+                          }
+                        }
+                      } catch (err) {
+                        if (err.status === 401) {
+                          await handleLogout(callbackUrl, "Token not valid. Please log in again.");
                         }
                       }
-                    } catch (err) {
-                      if (err.status === 401) {
-                        await handleLogout(callbackUrl, "Token not valid. Please log in again.");
-                      }
                     }
-                  }
 
-                  setUser({
-                    id: decryptedData.user.id,
-                    name: decryptedData.user.name,
-                    username: decryptedData.user.username,
-                    email: decryptedData.user.email,
-                    roleId: decryptedData.user.roleId,
-                    avatar: decryptedData.user.avatar,
-                  });
+                    setUser({
+                      id: decryptedData.user.id,
+                      name: decryptedData.user.name,
+                      username: decryptedData.user.username,
+                      email: decryptedData.user.email,
+                      roleId: decryptedData.user.roleId,
+                      avatar: decryptedData.user.avatar,
+                    });
+                  }
                 }
+              } catch (err) {
+                console.log("🚀 ~ checkAccess ~ err:", err);
               }
-            } catch (err) {
-              console.log("🚀 ~ checkAccess ~ err:", err);
             }
           } catch (err) {
             console.log("🚀 ~ checkAccess ~ err:", err);
