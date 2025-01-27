@@ -2,21 +2,19 @@ import MetaTag from "@/components/MetaTag";
 import useAuth from "@/configs/api/auth";
 import { useAppContext } from "@/contexts/AppContext";
 import { useToast } from "@/hooks/use-toast";
-// import useLogout from "@/hooks/useLogout";
+import useLogout from "@/hooks/useLogout";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 export default function AuthorizationCallbackPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { currentUser } = useAuth();
   const { login } = useAppContext();
-  //   const { logoutAuth } = useLogout();
-  const callbackUrl = router.query?.callbackUrl as string | undefined;
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { logoutAuth } = useLogout();
 
-  async function handleLogin(token: string, timeoutRef: React.MutableRefObject<NodeJS.Timeout | null>) {
+  async function handleLogin(token: string) {
     try {
       const res = await currentUser(token);
       if (res?.status === 200) {
@@ -28,27 +26,19 @@ export default function AuthorizationCallbackPage() {
         };
 
         await login(credentials);
-        timeoutRef.current = setTimeout(() => {
-          router.push(callbackUrl ?? "/todo");
-        }, 3000);
+        router.push("/todo");
       }
     } catch (err) {
-      toast({
-        variant: "destructive",
-        description: err.message,
-      });
+      if (err.status === 401) {
+        await logoutAuth(true);
+      } else {
+        toast({
+          variant: "destructive",
+          description: err.message,
+        });
 
-      router.push("/auth/login");
-      //   if (err.status === 401) {
-      //     await logoutAuth(true);
-      //   } else {
-      //     toast({
-      //       variant: "destructive",
-      //       description: err.message,
-      //     });
-
-      //     router.push("/auth/login");
-      //   }
+        router.push("/auth/login");
+      }
     }
   }
 
@@ -65,14 +55,8 @@ export default function AuthorizationCallbackPage() {
     }
 
     if (token) {
-      handleLogin(token as string, timeoutRef);
+      handleLogin(token as string);
     }
-
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
   }, [router.query]);
 
   return (
