@@ -9,15 +9,14 @@ const headers = {
 
 const axiosInstance = axios.create({
   headers,
-  withCredentials: true,
   timeout: 60 * 1000,
 });
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const csrfToken = getCookie("XSRF-TOKEN") ?? null;
+    const csrfToken = getCookie("CSRF-TOKEN") ?? null;
     if (csrfToken) {
-      config.headers["X-XSRF-TOKEN"] = csrfToken;
+      config.headers["X-CSRF-TOKEN"] = csrfToken;
     }
 
     const encryptedData = localStorage.getItem("encryptedData") ?? null;

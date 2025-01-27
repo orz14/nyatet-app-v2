@@ -9,6 +9,7 @@ import { decryptData, encryptData } from "@/lib/crypto";
 import { Comfortaa } from "next/font/google";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { Toaster } from "@/components/ui/toaster";
+import { setCookie } from "@/lib/cookie";
 
 type AppContextType = {
   loadingContext: boolean;
@@ -198,6 +199,11 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         const resServer = await checkConnection();
         if (resServer.status === 200) {
           setOffline(false);
+          setCookie("CSRF-TOKEN", resServer?.data.csrf_token || "", {
+            expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+            secure: true,
+            sameSite: "strict",
+          });
           try {
             await getIp();
             const ip = localStorage.getItem("userIp") ?? null;
