@@ -50,7 +50,7 @@ export default function TestingPage() {
 
   return (
     <>
-      <div className="w-full min-h-screen flex flex-col items-center justify-center">
+      <div className="w-full min-h-svh flex flex-col items-center justify-center">
         <span>Testing Page</span>
         {loadingContext ? (
           <span>Loading ...</span>

@@ -106,7 +106,7 @@ export default function RegisterPage() {
     <>
       <MetaTag title={"Register"} />
 
-      <AuthLayout>
+      <AuthLayout marginTop="mt-10">
         <Card>
           {error && (
             <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-3 text-xs text-red-600 text-center mb-4">

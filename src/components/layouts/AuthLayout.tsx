@@ -23,7 +23,7 @@ function MenuItem({ href, label }: MenuItemProps) {
   );
 }
 
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+export default function AuthLayout({ children, marginTop }: { children: React.ReactNode; marginTop?: string }) {
   const { loadingContext } = useAppContext();
 
   const menu = [
@@ -38,9 +38,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   ];
 
   return (
-    <main className="w-full min-h-screen bg-gray-950 text-gray-50 flex flex-col items-center justify-center">
+    <main className="w-full min-h-svh bg-gray-950 text-gray-50 flex flex-col items-center justify-center">
       <div className="w-full max-w-md px-4 py-6 space-y-4">
-        <header className="mb-10">
+        <header className={`mb-10 ${marginTop ?? ""}`}>
           <Image src="/logo.webp" alt="" width={500} height={500} className="w-full max-w-[140px] min-[448px]:max-w-[170px] h-auto mx-auto" priority={true} />
         </header>
 
