@@ -114,8 +114,8 @@ function UserIndexPage() {
                   render={(item: any, index: number) => (
                     <TableRow key={`user-${index}`}>
                       <TableCell>{item.username}</TableCell>
-                      <TableCell>{item.name}</TableCell>
-                      <TableCell>{item.email}</TableCell>
+                      <TableCell className="max-w-[200px] truncate">{item.name}</TableCell>
+                      <TableCell className="max-w-[230px] truncate">{item.email}</TableCell>
                       <TableCell>{roleNameFormat(item.role.role)}</TableCell>
                       <TableCell className="text-center">
                         <DropdownMenu>
