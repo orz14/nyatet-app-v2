@@ -20,6 +20,8 @@ export const decryptData = (encryptedData: string) => {
     return decryptedData;
   } catch (err) {
     console.error("🚀 Error decrypting data", err);
+    localStorage.removeItem("encryptedData");
+    window.location.href = `${window.location.origin}/auth/login`;
     return null;
   }
 };
