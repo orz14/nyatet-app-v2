@@ -27,7 +27,7 @@ export default function Sidebar() {
 
   const adminMenu = [
     {
-      href: "#",
+      href: "/role",
       label: "Role Management",
     },
     {

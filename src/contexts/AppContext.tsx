@@ -278,7 +278,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
     checkAccess();
 
-    const interval = setInterval(checkAccess, 300000);
+    const interval = setInterval(checkAccess, 1200000);
     // const interval = setInterval(checkAccess, 60000);
 
     return () => clearInterval(interval);
