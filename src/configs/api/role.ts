@@ -13,8 +13,28 @@ function useRole() {
     }
   }
 
+  async function store(data: { role: string }) {
+    try {
+      const res = await axiosInstance.post(`${baseURL}/role`, data);
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async function destroy(id: string) {
+    try {
+      const res = await axiosInstance.delete(`${baseURL}/role/${id}`);
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   return {
     getAllRole,
+    store,
+    destroy,
   };
 }
 

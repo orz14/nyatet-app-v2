@@ -47,7 +47,7 @@ export default function Header() {
 
       <header className="w-full my-6 flex justify-between items-center">
         <Link href={"/"}>
-          <Image src="/logo.webp" alt="" width={500} height={500} className="w-full max-w-[90px] min-[448px]:max-w-[120px] h-auto" priority={true} />
+          <Image src="/logo.webp" alt="" width={476} height={140} className="w-full max-w-[90px] min-[448px]:max-w-[120px] h-auto" priority={true} />
         </Link>
 
         <DropdownMenu>
@@ -69,7 +69,7 @@ export default function Header() {
               )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56">
+          <DropdownMenuContent className="w-56" align="end">
             <DropdownMenuGroup>
               <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/profil")}>
                 <User />
