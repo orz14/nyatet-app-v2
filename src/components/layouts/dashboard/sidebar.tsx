@@ -31,6 +31,10 @@ export default function Sidebar() {
       href: "/user",
       label: "User Management",
     },
+    {
+      href: "#",
+      label: "Log",
+    },
   ];
 
   return (

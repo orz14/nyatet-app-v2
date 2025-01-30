@@ -58,7 +58,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     username: null,
     email: null,
     roleId: null,
-    avatar: "", // TODO: add default avatar
+    avatar: "https://cdn.jsdelivr.net/gh/orz14/orzcode@main/img/blank.webp",
   });
   const [offline, setOffline] = useState<boolean>(false);
   const isOnline = useOnlineStatus();
@@ -102,7 +102,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       username: null,
       email: null,
       roleId: null,
-      avatar: "", // TODO: add default avatar
+      avatar: "https://cdn.jsdelivr.net/gh/orz14/orzcode@main/img/blank.webp",
     });
     await removeToken();
     localStorage.removeItem("userIp");

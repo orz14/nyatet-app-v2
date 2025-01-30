@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Github, Loader2, LogOut, User } from "lucide-react";
+import { Github, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
@@ -9,11 +9,10 @@ import { useToast } from "@/hooks/use-toast";
 import useAuth from "@/configs/api/auth";
 import MainLoader from "@/components/loader/MainLoader";
 import { useState } from "react";
-import IsAdmin from "@/hoc/IsAdmin";
 import useLogout from "@/hooks/useLogout";
 
 export default function Header() {
-  const { loadingContext, user } = useAppContext();
+  const { user } = useAppContext();
   const router = useRouter();
   const { toast } = useToast();
   const { logout: logoutUser } = useAuth();
@@ -22,7 +21,6 @@ export default function Header() {
 
   async function handleLogout() {
     setLoading(true);
-
     try {
       const res = await logoutUser();
       if (res.status === 200) {
@@ -58,10 +56,10 @@ export default function Header() {
         </Link>
 
         <DropdownMenu>
-          {/* <DropdownMenuTrigger disabled={loadingContext} asChild> */}
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="h-12 border-gray-900">
               {user?.avatar != null ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img src={user?.avatar} alt={user?.name} className="size-7 rounded-full bg-indigo-950 object-cover" />
               ) : (
                 <div className="flex justify-center items-center text-[14px] leading-[0] size-7 rounded-full bg-indigo-950 overflow-hidden">
@@ -69,21 +67,6 @@ export default function Header() {
                 </div>
               )}
               <span className="max-w-[230px] truncate">{user?.name}</span>
-
-              {/* {loadingContext ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <>
-                  {user?.avatar != null ? (
-                    <img src={user?.avatar} alt={user?.name} className="size-7 rounded-full bg-indigo-950 object-cover" />
-                  ) : (
-                    <div className="flex justify-center items-center text-[14px] leading-[0] size-7 rounded-full bg-indigo-950 overflow-hidden">
-                      <span>{user?.name[0]}</span>
-                    </div>
-                  )}
-                  <span className="max-w-[230px] truncate">{user?.name}</span>
-                </>
-              )} */}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end">
@@ -96,18 +79,6 @@ export default function Header() {
                 <Github />
                 <span>Source Code</span>
               </DropdownMenuItem>
-              <IsAdmin>
-                <DropdownMenuItem className="cursor-pointer">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
-                    />
-                  </svg>
-                  <span>Log</span>
-                </DropdownMenuItem>
-              </IsAdmin>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer hover:!bg-red-950/50" onClick={handleLogout}>
