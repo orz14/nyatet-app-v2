@@ -54,6 +54,8 @@ export default function AddRole({ fetchFunction }: AddRoleType) {
           if (err.response.data.message.role) {
             setErrRole(err.response.data.message.role[0]);
           }
+        } else if (err.status === 409) {
+          setErrRole(err.response.data.message);
         } else if (err.status === 500) {
           toast({
             variant: "destructive",
