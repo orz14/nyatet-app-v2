@@ -1,10 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import Card from "../Card";
-import { Loader2 } from "lucide-react";
 import EachUtils from "@/utils/EachUtils";
-import { useAppContext } from "@/contexts/AppContext";
 
 type MenuItemProps = {
   href?: string;
@@ -24,8 +21,6 @@ function MenuItem({ href, label }: MenuItemProps) {
 }
 
 export default function AuthLayout({ children, marginTop }: { children: React.ReactNode; marginTop?: string }) {
-  const { loadingContext } = useAppContext();
-
   const menu = [
     {
       href: "/auth/login",
@@ -55,16 +50,7 @@ export default function AuthLayout({ children, marginTop }: { children: React.Re
           <EachUtils of={menu} render={(item: MenuItemProps, index: number) => <MenuItem key={index} href={item.href} label={item.label} />} />
         </nav>
 
-        {loadingContext ? (
-          <Card>
-            <div className="flex flex-row items-center justify-center text-xs">
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              <span>Please wait</span>
-            </div>
-          </Card>
-        ) : (
-          children
-        )}
+        {children}
       </div>
     </main>
   );

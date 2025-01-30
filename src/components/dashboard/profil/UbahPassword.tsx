@@ -1,6 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useAppContext } from "@/contexts/AppContext";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
@@ -10,6 +8,7 @@ import { sanitizeInput } from "@/utils/sanitizeInput";
 import useLogout from "@/hooks/useLogout";
 import { Loader2 } from "lucide-react";
 import useProfile from "@/configs/api/profile";
+import FormField from "@/components/FormField";
 
 export default function UbahPassword() {
   const { loadingContext } = useAppContext();
@@ -105,59 +104,47 @@ export default function UbahPassword() {
       </div>
 
       <form onSubmit={handleSubmit} className="w-full space-y-4" autoComplete="off">
-        <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="current_password" className="text-[11px] font-normal md:font-medium">
-            Password Saat Ini
-          </Label>
-          <Input
-            type="password"
-            id="current_password"
-            name="current_password"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.current_password}
-            placeholder="Masukkan Password Saat Ini"
-            className={`border-gray-900 ${(errors.current_password && touched.current_password) || errCurrentPassword ? "!border-red-600" : ""}`}
-            disabled={loadingContext}
-          />
-          {((errors.current_password && touched.current_password) || errCurrentPassword) && <span className="block text-xs text-red-600">{errors.current_password || errCurrentPassword}</span>}
-        </div>
+        <FormField
+          label="Password Saat Ini"
+          type="password"
+          name="current_password"
+          className={(errors.current_password && touched.current_password) || errCurrentPassword ? "!border-red-600" : ""}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.current_password}
+          placeholder="Masukkan Password Saat Ini"
+          required={true}
+          disabled={loadingContext}
+          error={((errors.current_password && touched.current_password) || errCurrentPassword) && <span className="block text-xs text-red-600">{errors.current_password || errCurrentPassword}</span>}
+        />
 
-        <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="password" className="text-[11px] font-normal md:font-medium">
-            Password Baru
-          </Label>
-          <Input
-            type="password"
-            id="password"
-            name="password"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.password}
-            placeholder="Masukkan Password Baru"
-            className={`border-gray-900 ${(errors.password && touched.password) || errPassword ? "!border-red-600" : ""}`}
-            disabled={loadingContext}
-          />
-          {((errors.password && touched.password) || errPassword) && <span className="block text-xs text-red-600">{errors.password || errPassword}</span>}
-        </div>
+        <FormField
+          label="Password Baru"
+          type="password"
+          name="password"
+          className={(errors.password && touched.password) || errPassword ? "!border-red-600" : ""}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.password}
+          placeholder="Masukkan Password Baru"
+          required={true}
+          disabled={loadingContext}
+          error={((errors.password && touched.password) || errPassword) && <span className="block text-xs text-red-600">{errors.password || errPassword}</span>}
+        />
 
-        <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="password_confirmation" className="text-[11px] font-normal md:font-medium">
-            Konfirmasi Password Baru
-          </Label>
-          <Input
-            type="password"
-            id="password_confirmation"
-            name="password_confirmation"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.password_confirmation}
-            placeholder="Konfirmasi Password Baru"
-            className={`border-gray-900 ${errors.password_confirmation && touched.password_confirmation ? "!border-red-600" : ""}`}
-            disabled={loadingContext}
-          />
-          {errors.password_confirmation && touched.password_confirmation && <span className="block text-xs text-red-600">{errors.password_confirmation}</span>}
-        </div>
+        <FormField
+          label="Konfirmasi Password Baru"
+          type="password"
+          name="password_confirmation"
+          className={errors.password_confirmation && touched.password_confirmation ? "!border-red-600" : ""}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.password_confirmation}
+          placeholder="Konfirmasi Password Baru"
+          required={true}
+          disabled={loadingContext}
+          error={errors.password_confirmation && touched.password_confirmation && <span className="block text-xs text-red-600">{errors.password_confirmation}</span>}
+        />
 
         <div>
           <Button type="submit" variant={"outline"} className="hover:bg-indigo-950/50" disabled={loadingContext || loading}>

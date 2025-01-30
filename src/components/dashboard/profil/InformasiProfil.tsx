@@ -1,6 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import useProfile from "@/configs/api/profile";
 import { useAppContext } from "@/contexts/AppContext";
 import { useEffect, useState } from "react";
@@ -10,6 +8,7 @@ import { sanitizeInput } from "@/utils/sanitizeInput";
 import useLogout from "@/hooks/useLogout";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import FormField from "@/components/FormField";
 
 export default function InformasiProfil() {
   const { loadingContext, user, updateUser } = useAppContext();
@@ -108,48 +107,33 @@ export default function InformasiProfil() {
       </div>
 
       <form onSubmit={handleSubmit} className="w-full space-y-4" autoComplete="off">
-        <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="name" className="text-[11px] font-normal md:font-medium">
-            Nama
-          </Label>
-          <Input
-            type="text"
-            id="name"
-            name="name"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={loadingContext ? "Loading ..." : values.name}
-            placeholder="Masukkan Nama"
-            className={`border-gray-900 ${(errors.name && touched.name) || errName ? "!border-red-600" : ""}`}
-            disabled={loadingContext}
-          />
-          {((errors.name && touched.name) || errName) && <span className="block text-xs text-red-600">{errors.name || errName}</span>}
-        </div>
+        <FormField
+          label="Nama"
+          name="name"
+          className={(errors.name && touched.name) || errName ? "!border-red-600" : ""}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={loadingContext ? "Loading ..." : values.name}
+          placeholder="Masukkan Nama"
+          required={true}
+          disabled={loadingContext}
+          error={((errors.name && touched.name) || errName) && <span className="block text-xs text-red-600">{errors.name || errName}</span>}
+        />
 
-        <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="username" className="text-[11px] font-normal md:font-medium">
-            Username
-          </Label>
-          <Input type="text" id="username" name="username" className="border-gray-900" value={loadingContext ? "Loading ..." : user?.username} disabled={true} />
-        </div>
+        <FormField label="Username" name="username" value={loadingContext ? "Loading ..." : user?.username} disabled={true} />
 
-        <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="email" className="text-[11px] font-normal md:font-medium">
-            Email
-          </Label>
-          <Input
-            type="email"
-            id="email"
-            name="email"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={loadingContext ? "Loading ..." : values.email}
-            placeholder="Masukkan Email"
-            className={`border-gray-900 ${(errors.email && touched.email) || errEmail ? "!border-red-600" : ""}`}
-            disabled={loadingContext}
-          />
-          {((errors.email && touched.email) || errEmail) && <span className="block text-xs text-red-600">{errors.email || errEmail}</span>}
-        </div>
+        <FormField
+          label="Email"
+          name="email"
+          className={(errors.email && touched.email) || errEmail ? "!border-red-600" : ""}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={loadingContext ? "Loading ..." : values.email}
+          placeholder="Masukkan Email"
+          required={true}
+          disabled={loadingContext}
+          error={((errors.email && touched.email) || errEmail) && <span className="block text-xs text-red-600">{errors.email || errEmail}</span>}
+        />
 
         <div>
           <Button type="submit" variant={"outline"} className="hover:bg-indigo-950/50" disabled={loadingContext || loading}>

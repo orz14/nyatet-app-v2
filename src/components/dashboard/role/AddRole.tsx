@@ -1,7 +1,5 @@
 import { Button } from "@/components/ui/button";
 import ModalDialog from "../ModalDialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import useRole from "@/configs/api/role";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -10,6 +8,7 @@ import * as Yup from "yup";
 import { sanitizeInput } from "@/utils/sanitizeInput";
 import useLogout from "@/hooks/useLogout";
 import { Loader2 } from "lucide-react";
+import FormField from "@/components/FormField";
 
 type AddRoleType = {
   fetchFunction: any;
@@ -78,13 +77,17 @@ export default function AddRole({ fetchFunction }: AddRoleType) {
       title="Tambah Role"
       content={
         <form id="addRoleForm" onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
-          <div className="grid w-full items-center gap-1.5">
-            <Label htmlFor="role" className="text-[11px] font-normal md:font-medium">
-              Nama Role
-            </Label>
-            <Input type="text" id="role" name="role" onChange={handleChange} onBlur={handleBlur} value={values.role} placeholder="Masukkan Nama Role" className={(errors.role && touched.role) || errRole ? "border-red-600" : ""} />
-            {((errors.role && touched.role) || errRole) && <span className="block text-xs text-red-600">{errors.role || errRole}</span>}
-          </div>
+          <FormField
+            label="Nama Role"
+            name="role"
+            className={(errors.role && touched.role) || errRole ? "!border-red-600" : ""}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={values.role}
+            placeholder="Masukkan Nama Role"
+            required={true}
+            error={((errors.role && touched.role) || errRole) && <span className="block text-xs text-red-600">{errors.role || errRole}</span>}
+          />
         </form>
       }
       footer={
