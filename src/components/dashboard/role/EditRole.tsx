@@ -1,26 +1,29 @@
+import FormField from "@/components/FormField";
 import { Button } from "@/components/ui/button";
-import ModalDialog from "../ModalDialog";
+import { DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import useRole from "@/configs/api/role";
-import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import useLogout from "@/hooks/useLogout";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { sanitizeInput } from "@/utils/sanitizeInput";
-import useLogout from "@/hooks/useLogout";
-import { Loader2 } from "lucide-react";
-import FormField from "@/components/FormField";
 
-type AddRoleType = {
+type EditRoleType = {
+  data: {
+    id: string;
+    role: string;
+  };
   fetchFunction: any;
 };
 
-export default function AddRole({ fetchFunction }: AddRoleType) {
-  const { store } = useRole();
+export default function EditRole({ data, fetchFunction }: EditRoleType) {
+  const { update } = useRole();
   const { toast } = useToast();
   const { logoutAuth } = useLogout();
   const [loading, setLoading] = useState<boolean>(false);
   const [errRole, setErrRole] = useState<string | null>(null);
-  const [open, setOpen] = useState<boolean>(false);
 
   const formik = useFormik<{ role: string }>({
     initialValues: {
@@ -32,15 +35,13 @@ export default function AddRole({ fetchFunction }: AddRoleType) {
         .required("Nama role diperlukan"),
     }),
     validateOnMount: true,
-    onSubmit: async (data) => {
+    onSubmit: async (dataRole) => {
       setLoading(true);
       setErrRole(null);
 
       try {
-        const res = await store(data);
-        if (res?.status === 201) {
-          setOpen(false);
-          formik.resetForm();
+        const res = await update(data.id, dataRole);
+        if (res?.status === 200) {
           toast({
             variant: "default",
             description: res?.data.message,
@@ -50,6 +51,12 @@ export default function AddRole({ fetchFunction }: AddRoleType) {
       } catch (err) {
         if (err.status === 401) {
           await logoutAuth(true);
+        } else if (err.status === 404) {
+          toast({
+            variant: "destructive",
+            description: err.response.data.message,
+          });
+          await fetchFunction();
         } else if (err.status === 422) {
           if (err.response.data.message.role) {
             setErrRole(err.response.data.message.role[0]);
@@ -75,46 +82,47 @@ export default function AddRole({ fetchFunction }: AddRoleType) {
 
   const { values, handleSubmit, handleChange, handleBlur, touched, errors } = formik;
 
+  useEffect(() => {
+    formik.setFieldValue("role", data.role ?? "");
+  }, []);
+
   return (
-    <ModalDialog
-      trigger={
-        <Button variant={"outline"} onClick={() => setOpen(true)}>
-          Tambah Role
-        </Button>
-      }
-      title="Tambah Role"
-      open={open}
-      setOpen={setOpen}
-      content={
-        <form id="addRoleForm" onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
-          <FormField
-            label="Nama Role"
-            name="role"
-            className={(errors.role && touched.role) || errRole ? "!border-red-600" : ""}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.role}
-            placeholder="Masukkan Nama Role"
-            required={true}
-            disabled={loading}
-            error={((errors.role && touched.role) || errRole) && <span className="block text-xs text-red-600">{errors.role || errRole}</span>}
-          />
-        </form>
-      }
-      footer={
-        <Button type="submit" form="addRoleForm" disabled={loading}>
+    <>
+      <DialogHeader>
+        <DialogTitle>Edit Role</DialogTitle>
+        <DialogDescription></DialogDescription>
+      </DialogHeader>
+      <form id="editRoleForm" onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
+        <FormField
+          label="Nama Role"
+          name="role"
+          className={(errors.role && touched.role) || errRole ? "!border-red-600" : ""}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.role}
+          placeholder="Masukkan Nama Role"
+          required={true}
+          disabled={loading}
+          error={((errors.role && touched.role) || errRole) && <span className="block text-xs text-red-600">{errors.role || errRole}</span>}
+        />
+      </form>
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button type="button" variant="outline" disabled={loading}>
+            Batal
+          </Button>
+        </DialogClose>
+        <Button type="submit" form="editRoleForm" disabled={loading}>
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
               Please wait
             </>
           ) : (
-            <span>Tambah</span>
+            <span>Simpan</span>
           )}
         </Button>
-      }
-      closeText={"Tutup"}
-      loading={loading}
-    />
+      </DialogFooter>
+    </>
   );
 }
