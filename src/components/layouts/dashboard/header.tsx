@@ -47,7 +47,14 @@ export default function Header() {
 
       <header className="w-full my-6 flex justify-between items-center">
         <Link href={"/"}>
-          <Image src="/logo.webp" alt="" width={476} height={140} className="w-full max-w-[90px] min-[448px]:max-w-[120px] h-auto" priority={true} />
+          <Image
+            src="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/logo.webp"
+            alt={process.env.NEXT_PUBLIC_APP_NAME || "Nyatet App"}
+            width={476}
+            height={140}
+            className="w-full max-w-[90px] min-[448px]:max-w-[120px] h-auto"
+            priority={true}
+          />
         </Link>
 
         <DropdownMenu>

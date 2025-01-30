@@ -23,17 +23,17 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // images: {
-  //   remotePatterns: [
-  //     {
-  //       protocol: "https",
-  //       hostname: "cdn.jsdelivr.net",
-  //       port: "",
-  //       pathname: "**",
-  //       search: "",
-  //     },
-  //   ],
-  // },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.jsdelivr.net",
+        port: "",
+        pathname: "**",
+        search: "",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
