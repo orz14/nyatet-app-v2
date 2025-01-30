@@ -116,7 +116,7 @@ export default function InformasiProfil() {
           value={loadingContext ? "Loading ..." : values.name}
           placeholder="Masukkan Nama"
           required={true}
-          disabled={loadingContext}
+          disabled={loadingContext || loading}
           error={((errors.name && touched.name) || errName) && <span className="block text-xs text-red-600">{errors.name || errName}</span>}
         />
 
@@ -131,7 +131,7 @@ export default function InformasiProfil() {
           value={loadingContext ? "Loading ..." : values.email}
           placeholder="Masukkan Email"
           required={true}
-          disabled={loadingContext}
+          disabled={loadingContext || loading}
           error={((errors.email && touched.email) || errEmail) && <span className="block text-xs text-red-600">{errors.email || errEmail}</span>}
         />
 

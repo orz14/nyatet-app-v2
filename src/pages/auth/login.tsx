@@ -3,7 +3,6 @@ import AuthLayout from "@/components/layouts/AuthLayout";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Card from "@/components/Card";
 import { useRouter } from "next/router";
@@ -108,6 +107,7 @@ export default function LoginPage() {
               value={values.username}
               placeholder="Masukkan Username"
               required={true}
+              disabled={loading}
               error={((errors.username && touched.username) || errUsername) && <span className="block text-xs text-red-600">{errors.username || errUsername}</span>}
             />
 
@@ -121,12 +121,13 @@ export default function LoginPage() {
               value={values.password}
               placeholder="Masukkan Password"
               required={true}
+              disabled={loading}
               error={((errors.password && touched.password) || errPassword) && <span className="block text-xs text-red-600">{errors.password || errPassword}</span>}
             />
 
             <div className="block min-[260px]:flex min-[260px]:flex-row min-[260px]:items-center min-[260px]:justify-between text-[11px] md:text-xs">
               <div className="flex items-center space-x-2">
-                <Checkbox id="remember" name="remember" onCheckedChange={(isChecked) => formik.setFieldValue("remember", isChecked)} onBlur={handleBlur} checked={values.remember} />
+                <Checkbox id="remember" name="remember" onCheckedChange={(isChecked) => formik.setFieldValue("remember", isChecked)} onBlur={handleBlur} checked={values.remember} disabled={loading} />
                 <Label htmlFor="remember" className="text-[11px] md:text-xs font-normal whitespace-nowrap">
                   Ingat Saya
                 </Label>

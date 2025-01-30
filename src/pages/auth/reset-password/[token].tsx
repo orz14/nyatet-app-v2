@@ -115,6 +115,7 @@ export default function ResetPassword() {
                 value={values.password}
                 placeholder="Masukkan Password Baru"
                 required={true}
+                disabled={loading}
                 error={((errors.password && touched.password) || errPassword) && <span className="block text-xs text-red-600">{errors.password || errPassword}</span>}
               />
 
@@ -128,6 +129,7 @@ export default function ResetPassword() {
                 value={values.password_confirmation}
                 placeholder="Konfirmasi Password Baru"
                 required={true}
+                disabled={loading}
                 error={errors.password_confirmation && touched.password_confirmation && <span className="block text-xs text-red-600">{errors.password_confirmation}</span>}
               />
 

@@ -2,8 +2,6 @@ import Card from "@/components/Card";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import MetaTag from "@/components/MetaTag";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import useAuth from "@/configs/api/auth";
 import { useAppContext } from "@/contexts/AppContext";
 import { useFormik } from "formik";
@@ -125,6 +123,7 @@ export default function RegisterPage() {
               value={values.name}
               placeholder="Masukkan Nama"
               required={true}
+              disabled={loading}
               error={((errors.name && touched.name) || errName) && <span className="block text-xs text-red-600">{errors.name || errName}</span>}
             />
 
@@ -137,6 +136,7 @@ export default function RegisterPage() {
               value={values.username}
               placeholder="Masukkan Username"
               required={true}
+              disabled={loading}
               error={((errors.username && touched.username) || errUsername) && <span className="block text-xs text-red-600">{errors.username || errUsername}</span>}
             />
 
@@ -150,6 +150,7 @@ export default function RegisterPage() {
               value={values.email}
               placeholder="Masukkan Email"
               required={true}
+              disabled={loading}
               error={((errors.email && touched.email) || errEmail) && <span className="block text-xs text-red-600">{errors.email || errEmail}</span>}
             />
 
@@ -163,6 +164,7 @@ export default function RegisterPage() {
               value={values.password}
               placeholder="Masukkan Password"
               required={true}
+              disabled={loading}
               error={((errors.password && touched.password) || errPassword) && <span className="block text-xs text-red-600">{errors.password || errPassword}</span>}
             />
 
@@ -176,6 +178,7 @@ export default function RegisterPage() {
               value={values.password_confirmation}
               placeholder="Konfirmasi Password"
               required={true}
+              disabled={loading}
               error={errors.password_confirmation && touched.password_confirmation && <span className="block text-xs text-red-600">{errors.password_confirmation}</span>}
             />
 

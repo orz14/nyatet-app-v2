@@ -114,7 +114,7 @@ export default function UbahPassword() {
           value={values.current_password}
           placeholder="Masukkan Password Saat Ini"
           required={true}
-          disabled={loadingContext}
+          disabled={loadingContext || loading}
           error={((errors.current_password && touched.current_password) || errCurrentPassword) && <span className="block text-xs text-red-600">{errors.current_password || errCurrentPassword}</span>}
         />
 
@@ -128,7 +128,7 @@ export default function UbahPassword() {
           value={values.password}
           placeholder="Masukkan Password Baru"
           required={true}
-          disabled={loadingContext}
+          disabled={loadingContext || loading}
           error={((errors.password && touched.password) || errPassword) && <span className="block text-xs text-red-600">{errors.password || errPassword}</span>}
         />
 
@@ -142,7 +142,7 @@ export default function UbahPassword() {
           value={values.password_confirmation}
           placeholder="Konfirmasi Password Baru"
           required={true}
-          disabled={loadingContext}
+          disabled={loadingContext || loading}
           error={errors.password_confirmation && touched.password_confirmation && <span className="block text-xs text-red-600">{errors.password_confirmation}</span>}
         />
 

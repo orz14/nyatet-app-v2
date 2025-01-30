@@ -94,11 +94,12 @@ export default function ForgotPasswordPage() {
               value={values.email}
               placeholder="Masukkan Email"
               required={true}
+              disabled={loading}
               error={((errors.email && touched.email) || errEmail) && <span className="block text-xs text-red-600">{errors.email || errEmail}</span>}
             />
 
             <div className="flex flex-col-reverse min-[350px]:flex-row gap-4">
-              <Button className={`w-full text-[12px] bg-gray-800 text-white hover:bg-gray-900 ${loading && "pointer-events-none opacity-50"}`} asChild>
+              <Button className={`w-full text-[12px] bg-gray-800 text-white hover:bg-gray-900 ${loading && "pointer-events-none opacity-50"}`} disabled={loading} asChild>
                 <Link href={"/auth/login"}>
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
