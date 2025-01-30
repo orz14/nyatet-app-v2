@@ -32,8 +32,8 @@ export default function Sidebar() {
       label: "User Management",
     },
     {
-      href: "#",
-      label: "Log",
+      href: "/logs",
+      label: "Logs",
     },
   ];
 
