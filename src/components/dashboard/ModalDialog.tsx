@@ -8,11 +8,14 @@ type ModalDialogType = {
   content?: any;
   footer?: any;
   closeText?: string;
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
+  loading?: boolean;
 };
 
-export default function ModalDialog({ trigger, title, description, content, footer, closeText }: ModalDialogType) {
+export default function ModalDialog({ trigger, title, description, content, footer, closeText, open, setOpen, loading = false }: ModalDialogType) {
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
@@ -23,7 +26,7 @@ export default function ModalDialog({ trigger, title, description, content, foot
         {footer && (
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="button" variant="outline">
+              <Button type="button" variant="outline" disabled={loading}>
                 {closeText}
               </Button>
             </DialogClose>

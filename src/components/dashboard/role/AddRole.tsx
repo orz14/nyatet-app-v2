@@ -20,6 +20,7 @@ export default function AddRole({ fetchFunction }: AddRoleType) {
   const { logoutAuth } = useLogout();
   const [loading, setLoading] = useState<boolean>(false);
   const [errRole, setErrRole] = useState<string | null>(null);
+  const [open, setOpen] = useState<boolean>(false);
 
   const formik = useFormik<{ role: string }>({
     initialValues: {
@@ -38,6 +39,7 @@ export default function AddRole({ fetchFunction }: AddRoleType) {
       try {
         const res = await store(data);
         if (res?.status === 201) {
+          setOpen(false);
           formik.resetForm();
           toast({
             variant: "default",
@@ -73,8 +75,14 @@ export default function AddRole({ fetchFunction }: AddRoleType) {
 
   return (
     <ModalDialog
-      trigger={<Button variant={"outline"}>Tambah Role</Button>}
+      trigger={
+        <Button variant={"outline"} onClick={() => setOpen(true)}>
+          Tambah Role
+        </Button>
+      }
       title="Tambah Role"
+      open={open}
+      setOpen={setOpen}
       content={
         <form id="addRoleForm" onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
           <FormField
@@ -103,6 +111,7 @@ export default function AddRole({ fetchFunction }: AddRoleType) {
         </Button>
       }
       closeText={"Tutup"}
+      loading={loading}
     />
   );
 }
