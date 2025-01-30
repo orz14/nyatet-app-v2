@@ -22,6 +22,15 @@ function useRole() {
     }
   }
 
+  async function update(id: string, data: { role: string }) {
+    try {
+      const res = await axiosInstance.patch(`${baseURL}/role/${id}`, data);
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async function destroy(id: string) {
     try {
       const res = await axiosInstance.delete(`${baseURL}/role/${id}`);
@@ -34,6 +43,7 @@ function useRole() {
   return {
     getAllRole,
     store,
+    update,
     destroy,
   };
 }

@@ -57,7 +57,7 @@ export default function DeleteRole({ id, fetchFunction }: DeleteRoleType) {
     <>
       <DialogHeader>
         <DialogTitle>Apakah kamu yakin?</DialogTitle>
-        <DialogDescription>Tindakan ini tidak dapat dibatalkan. Tindakan ini akan menghapus data secara permanen.</DialogDescription>
+        <DialogDescription className="pt-2">Tindakan ini tidak dapat dibatalkan. Tindakan ini akan menghapus data secara permanen.</DialogDescription>
       </DialogHeader>
       <DialogFooter>
         <DialogClose asChild>

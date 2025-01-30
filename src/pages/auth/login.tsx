@@ -3,32 +3,27 @@ import AuthLayout from "@/components/layouts/AuthLayout";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Card from "@/components/Card";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Loader2 } from "lucide-react";
 import useAuth from "@/configs/api/auth";
 import { sanitizeInput } from "@/utils/sanitizeInput";
 import { useAppContext } from "@/contexts/AppContext";
+import FormField from "@/components/FormField";
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
   const { login: setLogin } = useAppContext();
-  const usernameRef = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [errUsername, setErrUsername] = useState<string | null>(null);
   const [errPassword, setErrPassword] = useState<string | null>(null);
   const callbackUrl = router.query?.callbackUrl as string | undefined;
-
-  useEffect(() => {
-    usernameRef.current?.focus();
-  }, []);
 
   type FormikType = {
     username: string;
@@ -103,44 +98,36 @@ export default function LoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
-            <div className="grid w-full items-center gap-1.5">
-              <Label htmlFor="username" className="text-[11px] font-normal md:font-medium">
-                Username
-              </Label>
-              <Input
-                type="text"
-                id="username"
-                name="username"
-                ref={usernameRef}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.username}
-                placeholder="Masukkan Username"
-                className={(errors.username && touched.username) || errUsername ? "border-red-600" : ""}
-              />
-              {((errors.username && touched.username) || errUsername) && <span className="block text-xs text-red-600">{errors.username || errUsername}</span>}
-            </div>
+            <FormField
+              label="Username"
+              name="username"
+              className={(errors.username && touched.username) || errUsername ? "!border-red-600" : ""}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.username}
+              placeholder="Masukkan Username"
+              required={true}
+              disabled={loading}
+              error={((errors.username && touched.username) || errUsername) && <span className="block text-xs text-red-600">{errors.username || errUsername}</span>}
+            />
 
-            <div className="grid w-full items-center gap-1.5">
-              <Label htmlFor="password" className="text-[11px] font-normal md:font-medium">
-                Password
-              </Label>
-              <Input
-                type="password"
-                id="password"
-                name="password"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password}
-                placeholder="Masukkan Password"
-                className={(errors.password && touched.password) || errPassword ? "border-red-600" : ""}
-              />
-              {((errors.password && touched.password) || errPassword) && <span className="block text-xs text-red-600">{errors.password || errPassword}</span>}
-            </div>
+            <FormField
+              label="Password"
+              type="password"
+              name="password"
+              className={(errors.password && touched.password) || errPassword ? "!border-red-600" : ""}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.password}
+              placeholder="Masukkan Password"
+              required={true}
+              disabled={loading}
+              error={((errors.password && touched.password) || errPassword) && <span className="block text-xs text-red-600">{errors.password || errPassword}</span>}
+            />
 
             <div className="block min-[260px]:flex min-[260px]:flex-row min-[260px]:items-center min-[260px]:justify-between text-[11px] md:text-xs">
               <div className="flex items-center space-x-2">
-                <Checkbox id="remember" name="remember" onCheckedChange={(isChecked) => formik.setFieldValue("remember", isChecked)} onBlur={handleBlur} checked={values.remember} />
+                <Checkbox id="remember" name="remember" onCheckedChange={(isChecked) => formik.setFieldValue("remember", isChecked)} onBlur={handleBlur} checked={values.remember} disabled={loading} />
                 <Label htmlFor="remember" className="text-[11px] md:text-xs font-normal whitespace-nowrap">
                   Ingat Saya
                 </Label>

@@ -2,8 +2,6 @@ import Card from "@/components/Card";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import MetaTag from "@/components/MetaTag";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import useAuth from "@/configs/api/auth";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -12,6 +10,7 @@ import * as Yup from "yup";
 import { sanitizeInput } from "@/utils/sanitizeInput";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import FormField from "@/components/FormField";
 
 export default function ResetPassword() {
   const router = useRouter();
@@ -106,39 +105,33 @@ export default function ResetPassword() {
             <input type="hidden" id="email" name="email" value={values.email} />
 
             <div className="space-y-4">
-              <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="password" className="text-[11px] font-normal md:font-medium">
-                  Password Baru
-                </Label>
-                <Input
-                  type="password"
-                  id="password"
-                  name="password"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  value={values.password}
-                  placeholder="Masukkan Password Baru"
-                  className={(errors.password && touched.password) || errPassword ? "!border-red-600" : ""}
-                />
-                {((errors.password && touched.password) || errPassword) && <span className="block text-xs text-red-600">{errors.password || errPassword}</span>}
-              </div>
+              <FormField
+                label="Password Baru"
+                type="password"
+                name="password"
+                className={(errors.password && touched.password) || errPassword ? "!border-red-600" : ""}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.password}
+                placeholder="Masukkan Password Baru"
+                required={true}
+                disabled={loading}
+                error={((errors.password && touched.password) || errPassword) && <span className="block text-xs text-red-600">{errors.password || errPassword}</span>}
+              />
 
-              <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="password_confirmation" className="text-[11px] font-normal md:font-medium">
-                  Konfirmasi Password Baru
-                </Label>
-                <Input
-                  type="password"
-                  id="password_confirmation"
-                  name="password_confirmation"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  value={values.password_confirmation}
-                  placeholder="Konfirmasi Password Baru"
-                  className={errors.password_confirmation && touched.password_confirmation ? "!border-red-600" : ""}
-                />
-                {errors.password_confirmation && touched.password_confirmation && <span className="block text-xs text-red-600">{errors.password_confirmation}</span>}
-              </div>
+              <FormField
+                label="Konfirmasi Password Baru"
+                type="password"
+                name="password_confirmation"
+                className={errors.password_confirmation && touched.password_confirmation ? "!border-red-600" : ""}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.password_confirmation}
+                placeholder="Konfirmasi Password Baru"
+                required={true}
+                disabled={loading}
+                error={errors.password_confirmation && touched.password_confirmation && <span className="block text-xs text-red-600">{errors.password_confirmation}</span>}
+              />
 
               <div>
                 <Button type="submit" className="w-full text-[12px] bg-indigo-600 text-white hover:bg-indigo-800" disabled={loading}>

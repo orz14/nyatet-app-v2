@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import AddRole from "@/components/dashboard/role/AddRole";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import DeleteRole from "@/components/dashboard/role/DeleteRole";
+import EditRole from "@/components/dashboard/role/EditRole";
 
 function RoleIndexPage() {
   const title = "Role Management";
@@ -124,7 +125,6 @@ function RoleIndexPage() {
                       <TableCell>{roleNameFormat(item.role)}</TableCell>
                       <TableCell>{item.users_count} users</TableCell>
                       <TableCell className="text-center">
-                        {/* Way 1 */}
                         <Dialog>
                           <DropdownMenu modal={false}>
                             <DropdownMenuTrigger asChild>
@@ -171,7 +171,19 @@ function RoleIndexPage() {
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
-                          <DialogContent className="sm:max-w-[500px]">{openedDialog == "delete" ? <DeleteRole id={item.id} fetchFunction={fetchAllRole} /> : <div>edit</div>}</DialogContent>
+                          <DialogContent className="sm:max-w-[500px]">
+                            {openedDialog == "delete" ? (
+                              <DeleteRole id={item.id} fetchFunction={fetchAllRole} />
+                            ) : (
+                              <EditRole
+                                data={{
+                                  id: item.id,
+                                  role: roleNameFormat(item.role),
+                                }}
+                                fetchFunction={fetchAllRole}
+                              />
+                            )}
+                          </DialogContent>
                         </Dialog>
                       </TableCell>
                     </TableRow>

@@ -1,10 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import Card from "../Card";
-import { Loader2 } from "lucide-react";
 import EachUtils from "@/utils/EachUtils";
-import { useAppContext } from "@/contexts/AppContext";
 
 type MenuItemProps = {
   href?: string;
@@ -24,8 +21,6 @@ function MenuItem({ href, label }: MenuItemProps) {
 }
 
 export default function AuthLayout({ children, marginTop }: { children: React.ReactNode; marginTop?: string }) {
-  const { loadingContext } = useAppContext();
-
   const menu = [
     {
       href: "/auth/login",
@@ -41,23 +36,21 @@ export default function AuthLayout({ children, marginTop }: { children: React.Re
     <main className="w-full min-h-svh bg-gray-950 text-gray-50 flex flex-col items-center justify-center">
       <div className="w-full max-w-md px-4 py-6 space-y-4">
         <header className={`mb-10 ${marginTop ?? ""}`}>
-          <Image src="/logo.webp" alt="" width={476} height={140} className="w-full max-w-[140px] min-[448px]:max-w-[170px] h-auto mx-auto" priority={true} />
+          <Image
+            src="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/logo.webp"
+            alt={process.env.NEXT_PUBLIC_APP_NAME || "Nyatet App"}
+            width={476}
+            height={140}
+            className="w-full max-w-[140px] min-[448px]:max-w-[170px] h-auto mx-auto"
+            priority={true}
+          />
         </header>
 
         <nav className="bg-gray-900 rounded-lg p-2 text-[11px] font-normal min-[448px]:text-xs min-[448px]:font-medium flex justify-stretch gap-2 overflow-x-auto">
           <EachUtils of={menu} render={(item: MenuItemProps, index: number) => <MenuItem key={index} href={item.href} label={item.label} />} />
         </nav>
 
-        {loadingContext ? (
-          <Card>
-            <div className="flex flex-row items-center justify-center text-xs">
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              <span>Please wait</span>
-            </div>
-          </Card>
-        ) : (
-          children
-        )}
+        {children}
       </div>
     </main>
   );

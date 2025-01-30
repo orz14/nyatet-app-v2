@@ -2,8 +2,6 @@ import Card from "@/components/Card";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import MetaTag from "@/components/MetaTag";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import useAuth from "@/configs/api/auth";
 import { useAppContext } from "@/contexts/AppContext";
 import { useFormik } from "formik";
@@ -12,6 +10,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { sanitizeInput } from "@/utils/sanitizeInput";
 import { Loader2 } from "lucide-react";
+import FormField from "@/components/FormField";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -115,72 +114,73 @@ export default function RegisterPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
-            <div className="grid w-full items-center gap-1.5">
-              <Label htmlFor="name" className="text-[11px] font-normal md:font-medium">
-                Nama
-              </Label>
-              <Input type="text" id="name" name="name" onChange={handleChange} onBlur={handleBlur} value={values.name} placeholder="Masukkan Nama" className={(errors.name && touched.name) || errName ? "border-red-600" : ""} />
-              {((errors.name && touched.name) || errName) && <span className="block text-xs text-red-600">{errors.name || errName}</span>}
-            </div>
+            <FormField
+              label="Nama"
+              name="name"
+              className={(errors.name && touched.name) || errName ? "!border-red-600" : ""}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.name}
+              placeholder="Masukkan Nama"
+              required={true}
+              disabled={loading}
+              error={((errors.name && touched.name) || errName) && <span className="block text-xs text-red-600">{errors.name || errName}</span>}
+            />
 
-            <div className="grid w-full items-center gap-1.5">
-              <Label htmlFor="username" className="text-[11px] font-normal md:font-medium">
-                Username
-              </Label>
-              <Input
-                type="text"
-                id="username"
-                name="username"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.username}
-                placeholder="Masukkan Username"
-                className={(errors.username && touched.username) || errUsername ? "border-red-600" : ""}
-              />
-              {((errors.username && touched.username) || errUsername) && <span className="block text-xs text-red-600">{errors.username || errUsername}</span>}
-            </div>
+            <FormField
+              label="Username"
+              name="username"
+              className={(errors.username && touched.username) || errUsername ? "!border-red-600" : ""}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.username}
+              placeholder="Masukkan Username"
+              required={true}
+              disabled={loading}
+              error={((errors.username && touched.username) || errUsername) && <span className="block text-xs text-red-600">{errors.username || errUsername}</span>}
+            />
 
-            <div className="grid w-full items-center gap-1.5">
-              <Label htmlFor="email" className="text-[11px] font-normal md:font-medium">
-                Email
-              </Label>
-              <Input type="email" id="email" name="email" onChange={handleChange} onBlur={handleBlur} value={values.email} placeholder="Masukkan Email" className={(errors.email && touched.email) || errEmail ? "border-red-600" : ""} />
-              {((errors.email && touched.email) || errEmail) && <span className="block text-xs text-red-600">{errors.email || errEmail}</span>}
-            </div>
+            <FormField
+              label="Email"
+              type="email"
+              name="email"
+              className={(errors.email && touched.email) || errEmail ? "!border-red-600" : ""}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.email}
+              placeholder="Masukkan Email"
+              required={true}
+              disabled={loading}
+              error={((errors.email && touched.email) || errEmail) && <span className="block text-xs text-red-600">{errors.email || errEmail}</span>}
+            />
 
-            <div className="grid w-full items-center gap-1.5">
-              <Label htmlFor="password" className="text-[11px] font-normal md:font-medium">
-                Password
-              </Label>
-              <Input
-                type="password"
-                id="password"
-                name="password"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password}
-                placeholder="Masukkan Password"
-                className={(errors.password && touched.password) || errPassword ? "border-red-600" : ""}
-              />
-              {((errors.password && touched.password) || errPassword) && <span className="block text-xs text-red-600">{errors.password || errPassword}</span>}
-            </div>
+            <FormField
+              label="Password"
+              type="password"
+              name="password"
+              className={(errors.password && touched.password) || errPassword ? "!border-red-600" : ""}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.password}
+              placeholder="Masukkan Password"
+              required={true}
+              disabled={loading}
+              error={((errors.password && touched.password) || errPassword) && <span className="block text-xs text-red-600">{errors.password || errPassword}</span>}
+            />
 
-            <div className="grid w-full items-center gap-1.5">
-              <Label htmlFor="password_confirmation" className="text-[11px] font-normal md:font-medium">
-                Konfirmasi Password
-              </Label>
-              <Input
-                type="password"
-                id="password_confirmation"
-                name="password_confirmation"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password_confirmation}
-                placeholder="Konfirmasi Password"
-                className={errors.password_confirmation && touched.password_confirmation ? "border-red-600" : ""}
-              />
-              {errors.password_confirmation && touched.password_confirmation && <span className="block text-xs text-red-600">{errors.password_confirmation}</span>}
-            </div>
+            <FormField
+              label="Konfirmasi Password"
+              type="password"
+              name="password_confirmation"
+              className={errors.password_confirmation && touched.password_confirmation ? "!border-red-600" : ""}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.password_confirmation}
+              placeholder="Konfirmasi Password"
+              required={true}
+              disabled={loading}
+              error={errors.password_confirmation && touched.password_confirmation && <span className="block text-xs text-red-600">{errors.password_confirmation}</span>}
+            />
 
             <div>
               <Button type="submit" className="w-full text-[12px] bg-indigo-600 text-white hover:bg-indigo-800" disabled={loading}>

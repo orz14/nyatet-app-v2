@@ -37,12 +37,12 @@ const comfortaa = Comfortaa({
 });
 
 type UserType = {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-  roleId: number;
-  avatar: string;
+  id: number | null;
+  name: string | null;
+  username: string | null;
+  email: string | null;
+  roleId: number | null;
+  avatar: string | null;
 };
 
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
@@ -52,7 +52,14 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const { checkConnection } = useServer();
   const { getIp: getUserIp, setToken, getToken, removeToken } = useService();
   const [loading, setLoading] = useState<boolean>(true);
-  const [user, setUser] = useState<UserType | null>(null);
+  const [user, setUser] = useState<UserType | null>({
+    id: null,
+    name: "Loading ...",
+    username: null,
+    email: null,
+    roleId: null,
+    avatar: "https://cdn.jsdelivr.net/gh/orz14/orzcode@main/img/blank.webp",
+  });
   const [offline, setOffline] = useState<boolean>(false);
   const isOnline = useOnlineStatus();
 
@@ -89,7 +96,14 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   async function logout() {
     setLoading(true);
-    setUser(null);
+    setUser({
+      id: null,
+      name: "Loading ...",
+      username: null,
+      email: null,
+      roleId: null,
+      avatar: "https://cdn.jsdelivr.net/gh/orz14/orzcode@main/img/blank.webp",
+    });
     await removeToken();
     localStorage.removeItem("userIp");
     localStorage.removeItem("encryptedData");
