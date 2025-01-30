@@ -58,9 +58,19 @@ export default function Header() {
         </Link>
 
         <DropdownMenu>
-          <DropdownMenuTrigger disabled={loadingContext} asChild>
+          {/* <DropdownMenuTrigger disabled={loadingContext} asChild> */}
+          <DropdownMenuTrigger asChild>
             <Button variant="outline" className="h-12 border-gray-900">
-              {loadingContext ? (
+              {user?.avatar != null ? (
+                <img src={user?.avatar} alt={user?.name} className="size-7 rounded-full bg-indigo-950 object-cover" />
+              ) : (
+                <div className="flex justify-center items-center text-[14px] leading-[0] size-7 rounded-full bg-indigo-950 overflow-hidden">
+                  <span>{user?.name[0]}</span>
+                </div>
+              )}
+              <span className="max-w-[230px] truncate">{user?.name}</span>
+
+              {/* {loadingContext ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <>
@@ -73,7 +83,7 @@ export default function Header() {
                   )}
                   <span className="max-w-[230px] truncate">{user?.name}</span>
                 </>
-              )}
+              )} */}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end">
