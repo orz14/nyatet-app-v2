@@ -12,3 +12,7 @@ export function timeFormat(time: string) {
   const date = new Date(time);
   return format(date, "d MMMM yyyy HH:mm", { locale: id });
 }
+
+export function capitalize(str: string) {
+  return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+}
