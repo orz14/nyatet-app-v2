@@ -1,5 +1,3 @@
-import AuthorizationCheckLoader from "@/components/loader/AuthorizationCheckLoader";
-import MetaTag from "@/components/MetaTag";
 import { useAppContext } from "@/contexts/AppContext";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -21,11 +19,6 @@ export default function AdminCheck(WrappedComponent: any) {
       }
     }, [loadingContext]);
 
-    return (
-      <>
-        <MetaTag title={"Please wait"} />
-        {loading ? <AuthorizationCheckLoader /> : roleId == 1 ? <WrappedComponent {...props} /> : null}
-      </>
-    );
+    return <WrappedComponent authLoading={loading} {...props} />;
   };
 }
