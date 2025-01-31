@@ -12,8 +12,8 @@ export default function Footer() {
       <span className="max-[475px]:hidden"> &#183; </span>
       <span className="inline max-[475px]:block">
         Created with 💜 by{" "}
-        <Link href={"https://orzverse.com"} className="font-bold hover:underline" target="_blank">
-          ORZCODE
+        <Link href={process.env.NEXT_PUBLIC_AUTHOR_URL || "#"} className="font-bold hover:underline" target="_blank">
+          {process.env.NEXT_PUBLIC_AUTHOR_NAME}
         </Link>
       </span>
     </footer>
