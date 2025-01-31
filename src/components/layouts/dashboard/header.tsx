@@ -43,7 +43,7 @@ export default function Header() {
     <>
       {loading && <MainLoader />}
 
-      <header className="w-full my-6 flex justify-between items-center">
+      <header className="relative w-full my-6 flex justify-between items-center">
         <Link href={"/"}>
           <Image
             src="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/logo.webp"
