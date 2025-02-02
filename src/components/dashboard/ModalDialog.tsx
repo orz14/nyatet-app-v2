@@ -24,7 +24,7 @@ export default function ModalDialog({ trigger, title, description, content, foot
         </DialogHeader>
         {content && content}
         {footer && (
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:space-x-0">
             <DialogClose asChild>
               <Button type="button" variant="outline" disabled={loading}>
                 {closeText}

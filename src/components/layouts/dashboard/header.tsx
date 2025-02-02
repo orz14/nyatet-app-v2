@@ -57,7 +57,7 @@ export default function Header() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="h-12 border-gray-900">
+            <Button variant="outline" className="h-12 border-gray-900 active:!scale-100">
               {user?.avatar != null ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={user?.avatar} alt={user?.name} className="size-6 sm:size-7 rounded-full bg-indigo-950 object-cover" />
@@ -75,9 +75,13 @@ export default function Header() {
                 <User />
                 <span>Profil</span>
               </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer" onClick={() => window.open("https://github.com/orz14/nyatet-app-v2", "_blank")}>
+                <Github />
+                <span>Source Code Frontend</span>
+              </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer" onClick={() => window.open("https://github.com/orz14/nyatet-app", "_blank")}>
                 <Github />
-                <span>Source Code</span>
+                <span>Source Code Backend</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

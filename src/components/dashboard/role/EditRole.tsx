@@ -106,7 +106,7 @@ export default function EditRole({ data, fetchFunction }: EditRoleType) {
           error={((errors.role && touched.role) || errRole) && <span className="block text-xs text-red-600">{errors.role || errRole}</span>}
         />
       </form>
-      <DialogFooter>
+      <DialogFooter className="gap-2 sm:space-x-0">
         <DialogClose asChild>
           <Button type="button" variant="outline" disabled={loading}>
             Batal
