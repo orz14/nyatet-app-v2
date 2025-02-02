@@ -160,6 +160,12 @@ export default function LoginPage() {
           </form>
         </Card>
 
+        <div className="w-full flex flex-row items-center justify-center gap-x-2 sm:gap-x-4">
+          <div className="w-full h-[3px] border-t-2 border-gray-900" />
+          <span className="text-nowrap text-[11px] text-muted-foreground">Atau Masuk Dengan</span>
+          <div className="w-full h-[3px] border-t-2 border-gray-900" />
+        </div>
+
         <section className="flex flex-col min-[350px]:flex-row gap-4">
           <Button type="button" className="w-full text-[12px] bg-gray-800 text-white hover:bg-gray-900" onClick={() => handleLoginSocialite(process.env.NEXT_PUBLIC_GITHUB_LOGIN_URL || "#")} disabled={loading}>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 1792 1792">
