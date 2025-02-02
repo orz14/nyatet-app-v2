@@ -15,11 +15,11 @@ export default function MetaTag(props: MetaTagProps) {
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
       <link rel="canonical" href={`${process.env.NEXT_PUBLIC_APP_URL}${router.asPath}`} />
-      <link rel="icon" sizes="32x32" href="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/icon/nyatet-app-icon-32.webp" />
-      <link rel="icon" sizes="192x192" href="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/icon/nyatet-app-icon-192.webp" />
-      <link rel="apple-touch-icon-precomposed" href="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/icon/nyatet-app-icon-180.webp" />
-      <meta name="msapplication-TileImage" content="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/icon/nyatet-app-icon-144.webp" />
-      <link rel="icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/icon/nyatet-app-icon.webp" />
+      <link rel="icon" sizes="32x32" href="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/assets/icon/nyatet-app-icon-32.webp" />
+      <link rel="icon" sizes="192x192" href="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/assets/icon/nyatet-app-icon-192.webp" />
+      <link rel="apple-touch-icon-precomposed" href="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/assets/icon/nyatet-app-icon-180.webp" />
+      <meta name="msapplication-TileImage" content="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/assets/icon/nyatet-app-icon-144.webp" />
+      <link rel="icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/assets/icon/nyatet-app-icon.webp" />
       <meta name="robots" content="index, follow" />
       <meta name="geo.country" content="id" />
       <meta name="geo.placename" content="Indonesia" />
@@ -52,14 +52,14 @@ export default function MetaTag(props: MetaTagProps) {
       <meta property="og:url" content={`${process.env.NEXT_PUBLIC_APP_URL}${router.asPath}`} />
       <meta property="og:title" content={`${props.title ? props.title + " · " : ""}${process.env.NEXT_PUBLIC_APP_NAME}`} />
       <meta property="og:description" content={process.env.NEXT_PUBLIC_APP_DESCRIPTION} />
-      <meta property="og:image" content="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/icon/nyatet-app-icon.webp" />
+      <meta property="og:image" content="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/assets/icon/nyatet-app-icon.webp" />
 
       {/* Twitter */}
       <meta property="twitter:card" content="summary_large_image" />
       <meta property="twitter:url" content={`${process.env.NEXT_PUBLIC_APP_URL}${router.asPath}`} />
       <meta property="twitter:title" content={`${props.title ? props.title + " · " : ""}${process.env.NEXT_PUBLIC_APP_NAME}`} />
       <meta property="twitter:description" content={process.env.NEXT_PUBLIC_APP_DESCRIPTION} />
-      <meta property="twitter:image" content="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/icon/nyatet-app-icon.webp" />
+      <meta property="twitter:image" content="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/assets/icon/nyatet-app-icon.webp" />
 
       {/* Style */}
       <meta name="theme-color" content="#030712" />

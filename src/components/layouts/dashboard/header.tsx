@@ -46,7 +46,7 @@ export default function Header() {
       <header className="relative w-full my-6 flex justify-between items-center">
         <Link href={"/"}>
           <Image
-            src="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/logo.webp"
+            src="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/assets/logo/logo.webp"
             alt={process.env.NEXT_PUBLIC_APP_NAME || "Nyatet App"}
             width={476}
             height={140}

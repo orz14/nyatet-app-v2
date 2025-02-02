@@ -37,7 +37,7 @@ export default function AuthLayout({ children, marginTop }: { children: React.Re
       <div className="w-full max-w-md px-4 py-6 space-y-4">
         <header className={`mb-10 ${marginTop ?? ""}`}>
           <Image
-            src="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/logo.webp"
+            src="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/assets/logo/logo.webp"
             alt={process.env.NEXT_PUBLIC_APP_NAME || "Nyatet App"}
             width={476}
             height={140}
