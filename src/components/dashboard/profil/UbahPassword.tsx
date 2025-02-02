@@ -92,7 +92,7 @@ export default function UbahPassword() {
     <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-4 space-y-4 hover:border-indigo-900/60 transition-colors duration-300">
       <div className="w-full bg-gray-950 border border-indigo-900/60 rounded-lg p-4">
         <div className="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 sm:size-5">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

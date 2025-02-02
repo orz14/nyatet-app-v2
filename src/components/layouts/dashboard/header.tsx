@@ -43,14 +43,14 @@ export default function Header() {
     <>
       {loading && <MainLoader />}
 
-      <header className="relative w-full my-6 flex justify-between items-center">
+      <header className="relative w-full pt-4 pb-0 lg:py-6 flex justify-between items-center gap-x-4 bg-gray-950 z-50">
         <Link href={"/"}>
           <Image
             src="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/assets/logo/logo.webp"
             alt={process.env.NEXT_PUBLIC_APP_NAME || "Nyatet App"}
             width={476}
             height={140}
-            className="w-full max-w-[90px] min-[448px]:max-w-[120px] h-auto"
+            className="w-full min-w-[90px] max-w-[90px] min-[448px]:max-w-[120px] h-auto"
             priority={true}
           />
         </Link>
@@ -60,13 +60,13 @@ export default function Header() {
             <Button variant="outline" className="h-12 border-gray-900">
               {user?.avatar != null ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={user?.avatar} alt={user?.name} className="size-7 rounded-full bg-indigo-950 object-cover" />
+                <img src={user?.avatar} alt={user?.name} className="size-6 sm:size-7 rounded-full bg-indigo-950 object-cover" />
               ) : (
-                <div className="flex justify-center items-center text-[14px] leading-[0] size-7 rounded-full bg-indigo-950 overflow-hidden">
+                <div className="flex justify-center items-center text-[14px] leading-[0] size-6 sm:size-7 rounded-full bg-indigo-950 overflow-hidden">
                   <span>{user?.name[0]}</span>
                 </div>
               )}
-              <span className="max-w-[230px] truncate">{user?.name}</span>
+              <span className="hidden min-[289px]:block max-w-[230px] truncate">{user?.name}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end">

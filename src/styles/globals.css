@@ -91,3 +91,17 @@
 .sidebar-menu.active {
   @apply !border-indigo-600 !text-indigo-400;
 }
+
+.mobile-sidebar-menu {
+  @apply w-full flex items-center gap-x-1 py-1.5 whitespace-nowrap hover:text-indigo-400 hover:gap-x-2 transition-all duration-200;
+}
+
+.mobile-sidebar-menu.active {
+  @apply text-indigo-400 !gap-x-2;
+}
+
+/* Other */
+.element-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}

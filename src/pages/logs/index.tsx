@@ -63,11 +63,11 @@ function LogsIndexPage({ authLoading }: any) {
   function Loader() {
     return Array.from({ length: 3 }).map((_, index) => (
       <div key={`loader-logs-${index}`} className="bg-indigo-950/20 p-4 rounded-lg">
-        <div className="w-full flex items-center gap-x-4">
+        <div className="w-full flex items-center gap-x-2 sm:gap-x-4">
           <TextSkeleton width="w-14" />
           <TextSkeleton width="w-44" />
           <TextSkeleton width="w-24" />
-          <TextSkeleton width="w-full max-w-[400px]" />
+          <TextSkeleton width="w-24 md:w-full md:max-w-[200px] xl:max-w-[400px]" />
         </div>
       </div>
     ));
@@ -83,7 +83,7 @@ function LogsIndexPage({ authLoading }: any) {
             title={title}
             breadcrumb={breadcrumb}
             Icon={() => (
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 sm:size-6">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -102,50 +102,52 @@ function LogsIndexPage({ authLoading }: any) {
               </div>
 
               <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-4">
-                <Accordion type="single" collapsible className="w-full space-y-2">
-                  <EachUtils
-                    of={logs?.logs}
-                    isLoading={loading}
-                    Loader={Loader}
-                    render={(item: any, index: number) => (
-                      <AccordionItem key={`logs-${index}`} value={`item-${index + 1}`} className="border-none bg-indigo-950/20 hover:bg-indigo-950/10 px-4 rounded-lg transition-colors duration-200">
-                        <AccordionTrigger className="hover:no-underline">
-                          <div className="w-full flex items-center gap-x-4">
-                            <div className={`w-14 text-left truncate flex items-center gap-x-1 ${item.level == "INFO" ? "text-sky-600" : "text-red-600"}`}>
-                              {item.level == "INFO" ? (
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                              ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
-                              )}
-                              <span>{capitalize(item.level)}</span>
+                <div className="element-responsive">
+                  <Accordion type="single" collapsible className="w-full space-y-2">
+                    <EachUtils
+                      of={logs?.logs}
+                      isLoading={loading}
+                      Loader={Loader}
+                      render={(item: any, index: number) => (
+                        <AccordionItem key={`logs-${index}`} value={`item-${index + 1}`} className="w-fit min-[595px]:w-full border-none bg-indigo-950/20 hover:bg-indigo-950/10 px-4 rounded-lg transition-colors duration-200">
+                          <AccordionTrigger className="hover:no-underline">
+                            <div className="w-full flex items-center gap-x-2 sm:gap-x-4">
+                              <div className={`w-14 text-left truncate flex items-center gap-x-1 ${item.level == "INFO" ? "text-sky-600" : "text-red-600"}`}>
+                                {item.level == "INFO" ? (
+                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
+                                      clipRule="evenodd"
+                                    />
+                                  </svg>
+                                ) : (
+                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
+                                      clipRule="evenodd"
+                                    />
+                                  </svg>
+                                )}
+                                <span>{capitalize(item.level)}</span>
+                              </div>
+                              <div className="w-44 text-left truncate">{timeFormat(item.timestamp)}</div>
+                              <div className="w-24 text-left truncate">{item.environment}</div>
+                              <div className="w-24 md:w-full md:max-w-[200px] xl:max-w-[400px] text-left truncate">{item.message}</div>
                             </div>
-                            <div className="w-44 text-left truncate">{timeFormat(item.timestamp)}</div>
-                            <div className="w-24 text-left truncate">{item.environment}</div>
-                            <div className="w-full max-w-[400px] text-left truncate">{item.message}</div>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent>{item.message}</AccordionContent>
-                      </AccordionItem>
-                    )}
-                    Empty={() => (
-                      <div className="w-full bg-indigo-950/20 text-center p-4 rounded-lg">
-                        <span>No data available</span>
-                      </div>
-                    )}
-                  />
-                </Accordion>
+                          </AccordionTrigger>
+                          <AccordionContent>{item.message}</AccordionContent>
+                        </AccordionItem>
+                      )}
+                      Empty={() => (
+                        <div className="w-full bg-indigo-950/20 text-center p-4 rounded-lg">
+                          <span>No data available</span>
+                        </div>
+                      )}
+                    />
+                  </Accordion>
+                </div>
               </div>
 
               <Pagination actionFunction={fetchLogs} prevUrl={logs?.pagination.prev_page_url} nextUrl={logs?.pagination.next_page_url} loading={loading} />
