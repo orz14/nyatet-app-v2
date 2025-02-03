@@ -133,9 +133,9 @@ function RoleIndexPage({ authLoading }: any) {
                             <Dialog>
                               <DropdownMenu modal={false}>
                                 <DropdownMenuTrigger asChild>
-                                  <Button variant={"outline"} size={"icon"} className="bg-indigo-950/40 border-indigo-950/90">
+                                  <Button variant={"ghost"} size={"icon"} className="[&_svg]:size-6 md:[&_svg]:size-7">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                                     </svg>
                                   </Button>
                                 </DropdownMenuTrigger>

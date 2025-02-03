@@ -12,7 +12,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from "@/components/ui/button";
 import TextSkeleton from "@/components/skeleton/TextSkeleton";
 import useLogout from "@/hooks/useLogout";
-import { roleNameFormat } from "@/utils/formatters";
+import { roleNameFormat, timeFormat } from "@/utils/formatters";
 import AuthorizationCheckLoader from "@/components/loader/AuthorizationCheckLoader";
 
 function UserIndexPage({ authLoading }: any) {
@@ -55,6 +55,7 @@ function UserIndexPage({ authLoading }: any) {
       <TableRow key={`loader-user-${index}`}>
         <TableCell>
           <TextSkeleton />
+          <TextSkeleton width="w-20" height="h-3" className="mt-1" />
         </TableCell>
         <TableCell>
           <TextSkeleton />
@@ -104,10 +105,10 @@ function UserIndexPage({ authLoading }: any) {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Username</TableHead>
-                      <TableHead>Name</TableHead>
+                      <TableHead>User</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>Role</TableHead>
+                      <TableHead>Joined</TableHead>
                       <TableHead></TableHead>
                     </TableRow>
                   </TableHeader>
@@ -118,16 +119,19 @@ function UserIndexPage({ authLoading }: any) {
                       Loader={Loader}
                       render={(item: any, index: number) => (
                         <TableRow key={`user-${index}`}>
-                          <TableCell>{item.username}</TableCell>
-                          <TableCell className="max-w-[200px] truncate">{item.name}</TableCell>
+                          <TableCell className="max-w-[200px]">
+                            <span className="block truncate">{item.name}</span>
+                            <span className="block truncate text-[11px] text-muted-foreground font-bold">{item.username}</span>
+                          </TableCell>
                           <TableCell className="max-w-[230px] truncate">{item.email}</TableCell>
                           <TableCell>{roleNameFormat(item.role.role)}</TableCell>
+                          <TableCell className="max-w-44 truncate">{timeFormat(item.created_at, "d MMMM yyyy")}</TableCell>
                           <TableCell className="text-center">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant={"outline"} size={"icon"} className="bg-indigo-950/40 border-indigo-950/90">
+                                <Button variant={"ghost"} size={"icon"} className="[&_svg]:size-6 md:[&_svg]:size-7">
                                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                                   </svg>
                                 </Button>
                               </DropdownMenuTrigger>
