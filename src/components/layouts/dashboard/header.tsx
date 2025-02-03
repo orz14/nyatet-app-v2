@@ -43,7 +43,7 @@ export default function Header() {
     <>
       {loading && <MainLoader />}
 
-      <header className="relative w-full pt-4 pb-0 lg:py-6 flex justify-between items-center gap-x-4 bg-gray-950 z-50">
+      <header className="relative w-full pt-4 pb-0 xl:py-6 flex justify-between items-center gap-x-4 bg-gray-950 z-50">
         <Link href={"/"}>
           <Image
             src="https://cdn.jsdelivr.net/gh/orz14/nyatet-app-v2@main/public/assets/logo/logo.webp"
@@ -66,7 +66,7 @@ export default function Header() {
                   <span>{user?.name[0]}</span>
                 </div>
               )}
-              <span className="hidden min-[289px]:block max-w-[230px] truncate">{user?.name}</span>
+              <span className="hidden min-[418px]:block max-w-[230px] truncate">{user?.name}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end">

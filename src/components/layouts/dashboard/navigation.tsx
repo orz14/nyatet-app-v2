@@ -45,7 +45,7 @@ export default function Navigation() {
 
   return (
     <>
-      <nav className="block lg:hidden sticky top-0 left-0 w-full bg-gray-950 rounded-b-lg z-40">
+      <nav className="block xl:hidden sticky top-0 left-0 w-full bg-gray-950 rounded-b-lg z-40">
         <section className="relative bg-gray-950 rounded-b-lg pt-4 z-30">
           <div className="bg-gray-950 border border-gray-900 rounded-lg p-4 cursor-pointer select-none" onClick={() => setMenuOpen(!menuOpen)}>
             <div className="flex justify-between items-center gap-x-2">
@@ -57,7 +57,11 @@ export default function Navigation() {
           </div>
         </section>
 
-        <section className={`absolute w-full backdrop-blur-sm bg-gray-950/80 border-l border-r border-b border-gray-900 rounded-lg pt-7 pb-4 px-4 ${menuOpen ? "-mt-3" : "mt-[-100%]"} space-y-4 z-20 transition-all duration-200 ease-in-out`}>
+        <section
+          className={`absolute w-full backdrop-blur-sm bg-gray-950/80 border-l border-r border-b border-gray-900 rounded-lg pt-7 pb-4 px-4 ${
+            menuOpen ? "-mt-3" : "-mt-[100svh]"
+          } space-y-4 overflow-hidden transition-all duration-200 ease-in-out z-20`}
+        >
           <div>
             <div className="text-[9px] text-indigo-400">Main Menu</div>
             <div className="mt-2">
@@ -102,7 +106,7 @@ export default function Navigation() {
         </section>
       </nav>
 
-      <aside className="hidden lg:block lg:sticky lg:top-4 lg:left-0 w-[300px] h-max bg-gray-950 border border-gray-900 rounded-lg p-6 z-40">
+      <aside className="hidden xl:block xl:sticky xl:top-4 xl:left-0 w-[300px] h-max bg-gray-950 border border-gray-900 rounded-lg p-6 z-40">
         <div>
           <div className="text-xs text-white flex gap-x-2 items-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">

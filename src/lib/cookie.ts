@@ -26,3 +26,7 @@ export const setCookie = (name: string, value: string, options: any = {}) => {
   }
   document.cookie = cookieString;
 };
+
+export const removeCookie = (name: string, options: any = {}) => {
+  document.cookie = `${name}=; path=${options.path || "/"}; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+};
