@@ -57,10 +57,10 @@ export default function Header() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="h-12 border-gray-900 active:!scale-100">
+            <Button variant="outline" className="h-12 border-gray-900 active:!transform-none">
               {user?.avatar != null ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={user?.avatar} alt={user?.name} className="size-6 sm:size-7 rounded-full bg-indigo-950 object-cover" />
+                <img src={user?.avatar} alt={user?.name} className="size-6 sm:size-7 rounded-full bg-indigo-950 object-cover" loading="lazy" />
               ) : (
                 <div className="flex justify-center items-center text-[14px] leading-[0] size-6 sm:size-7 rounded-full bg-indigo-950 overflow-hidden">
                   <span>{user?.name[0]}</span>

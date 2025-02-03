@@ -167,7 +167,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         const ipAfter = res?.data.ip;
 
         if (ipBefore != ipAfter) {
-          // localStorage.setItem("userIp", ipAfter);
           setCookie("user-ip", ipAfter, {
             expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
             secure: true,
@@ -176,7 +175,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         }
         resolve(ipAfter);
       } catch (err) {
-        // localStorage.setItem("userIp", "");
         setCookie("user-ip", "", {
           expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
           secure: true,
@@ -225,16 +223,16 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       const callbackUrl = encodeURI(router.asPath);
 
       try {
-        const resServer = await checkConnection();
-        if (resServer.status === 200) {
-          setOffline(false);
-          setCookie("CSRF-TOKEN", resServer?.data.csrf_token || "", {
-            expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
-            secure: true,
-            sameSite: "strict",
-          });
-          try {
-            await getIp();
+        await getIp();
+        try {
+          const resServer = await checkConnection();
+          if (resServer.status === 200) {
+            setOffline(false);
+            setCookie("CSRF-TOKEN", resServer?.data.csrf_token || "", {
+              expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+              secure: true,
+              sameSite: "strict",
+            });
             if (router.pathname != "/auth/callback") {
               try {
                 const resToken = await getToken();
@@ -285,16 +283,16 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
                 console.log("🚀 ~ checkAccess ~ err:", err);
               }
             }
-          } catch (err) {
-            console.log("🚀 ~ checkAccess ~ err:", err);
+          }
+        } catch (err) {
+          if (err.status === 500) {
+            setOffline(true);
+          } else {
+            setOffline(true);
           }
         }
       } catch (err) {
-        if (err.status === 500) {
-          setOffline(true);
-        } else {
-          setOffline(true);
-        }
+        console.log("🚀 ~ checkAccess ~ err:", err);
       } finally {
         setLoading(false);
       }
