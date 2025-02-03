@@ -5,7 +5,7 @@ import Offline from "@/components/Offline";
 import useService from "@/configs/api/service";
 import useAuth from "@/configs/api/auth";
 import { useToast } from "@/hooks/use-toast";
-import { decryptData, encryptData } from "@/lib/crypto";
+import { decryptData, encryptData, encryptString } from "@/lib/crypto";
 import { Comfortaa } from "next/font/google";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { Toaster } from "@/components/ui/toaster";
@@ -37,11 +37,10 @@ const comfortaa = Comfortaa({
 });
 
 type UserType = {
-  id: number | null;
   name: string | null;
   username: string | null;
   email: string | null;
-  roleId: number | null;
+  roleId: string | null;
   avatar: string | null;
 };
 
@@ -53,7 +52,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const { getIp: getUserIp, setToken, getToken, removeToken } = useService();
   const [loading, setLoading] = useState<boolean>(true);
   const [user, setUser] = useState<UserType | null>({
-    id: null,
     name: "Loading ...",
     username: null,
     email: null,
@@ -66,7 +64,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   type LoginType = {
     token: string;
     data: {
-      id: number;
       name: string;
       username: string;
       email: string;
@@ -78,11 +75,10 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   async function login(credentials: { data: LoginType }) {
     const token = credentials.data.token;
     const user = {
-      id: credentials.data.data.id,
       name: credentials.data.data.name,
       username: credentials.data.data.username,
       email: credentials.data.data.email,
-      roleId: credentials.data.data.role_id,
+      roleId: encryptString(credentials.data.data.role_id),
       avatar: credentials.data.data.avatar,
     };
 
@@ -96,7 +92,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   async function logout() {
     setLoading(true);
     setUser({
-      id: null,
       name: "Loading ...",
       username: null,
       email: null,
@@ -117,7 +112,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const tokenData = await getToken();
     const token = tokenData?.data.token;
     const newData = {
-      id: user?.id,
       name: data?.name,
       username: user?.username,
       email: data?.email,
@@ -135,7 +129,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       const decryptedData = decryptData(encryptedData);
 
       setUser({
-        id: decryptedData.user.id,
         name: decryptedData.user.name,
         username: decryptedData.user.username,
         email: decryptedData.user.email,
@@ -270,7 +263,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
                     }
 
                     setUser({
-                      id: decryptedData.user.id,
                       name: decryptedData.user.name,
                       username: decryptedData.user.username,
                       email: decryptedData.user.email,
