@@ -25,3 +25,25 @@ export const decryptData = (encryptedData: string) => {
     return null;
   }
 };
+
+export const encryptString = (data: string | number) => {
+  try {
+    const dataString = data.toString();
+    const encryptedData = CryptoJS.AES.encrypt(dataString, SECRET_KEY).toString();
+    return encryptedData;
+  } catch (err) {
+    console.error("🚀 Error encrypting data", err);
+    return null;
+  }
+};
+
+export const decryptString = (encryptedData: string) => {
+  try {
+    const bytes = CryptoJS.AES.decrypt(encryptedData, SECRET_KEY);
+    const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+    return decryptedData;
+  } catch (err) {
+    console.error("🚀 Error decrypting data", err);
+    return null;
+  }
+};
