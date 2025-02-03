@@ -9,6 +9,7 @@ import { sanitizeInput } from "@/utils/sanitizeInput";
 import useLogout from "@/hooks/useLogout";
 import { Loader2 } from "lucide-react";
 import FormField from "@/components/FormField";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type AddRoleType = {
   fetchFunction: any;
@@ -78,9 +79,18 @@ export default function AddRole({ fetchFunction }: AddRoleType) {
   return (
     <ModalDialog
       trigger={
-        <Button variant={"outline"} onClick={() => setOpen(true)}>
-          Tambah Role
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant={"outline"} onClick={() => setOpen(true)}>
+                Tambah Role
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Tambah Role</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       }
       title="Tambah Role"
       open={open}
