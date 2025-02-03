@@ -14,11 +14,25 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
+    // X-CSRF-TOKEN
     const csrfToken = getCookie("CSRF-TOKEN") ?? null;
     if (csrfToken) {
       config.headers["X-CSRF-TOKEN"] = csrfToken;
     }
 
+    // User-IP
+    const getUserIp = getCookie("user-ip") ?? null;
+    let userIp: string | null = "";
+    if (getUserIp) {
+      userIp = getUserIp.replace("=", "");
+    } else {
+      userIp = null;
+    }
+    if (userIp) {
+      config.headers["User-IP"] = userIp;
+    }
+
+    // Authorization
     const encryptedData = localStorage.getItem("encryptedData") ?? null;
     if (encryptedData) {
       const decryptedData = decryptData(encryptedData);
