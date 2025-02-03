@@ -9,7 +9,7 @@ import { decryptData, encryptData } from "@/lib/crypto";
 import { Comfortaa } from "next/font/google";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { Toaster } from "@/components/ui/toaster";
-import { setCookie } from "@/lib/cookie";
+import { getCookie, removeCookie, setCookie } from "@/lib/cookie";
 
 type AppContextType = {
   loadingContext: boolean;
@@ -76,7 +76,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   async function login(credentials: { data: LoginType }) {
-    const ip = localStorage.getItem("userIp") ?? null;
     const token = credentials.data.token;
     const user = {
       id: credentials.data.data.id,
@@ -88,7 +87,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     await setToken(token);
-    const encryptedData = encryptData({ token, ip, user });
+    const encryptedData = encryptData({ token, user });
     if (encryptedData) {
       localStorage.setItem("encryptedData", encryptedData);
     }
@@ -105,7 +104,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       avatar: "https://cdn.jsdelivr.net/gh/orz14/orzcode@main/img/blank.webp",
     });
     await removeToken();
-    localStorage.removeItem("userIp");
+    removeCookie("user-ip");
     localStorage.removeItem("encryptedData");
   }
 
@@ -115,7 +114,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   async function updateUser(data: updateUserType) {
-    const ip = localStorage.getItem("userIp") ?? null;
     const tokenData = await getToken();
     const token = tokenData?.data.token;
     const newData = {
@@ -127,7 +125,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       avatar: user?.avatar,
     };
 
-    const newEncryptedData = encryptData({ token, ip, user: newData });
+    const newEncryptedData = encryptData({ token, user: newData });
     if (newEncryptedData) {
       localStorage.setItem("encryptedData", newEncryptedData);
     }
@@ -156,17 +154,34 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   async function getIp() {
     return new Promise(async (resolve, reject) => {
-      const ipBefore = localStorage.getItem("userIp") ?? null;
+      const getIpBefore = getCookie("user-ip") ?? null;
+      let ipBefore: string | null = "";
+      if (getIpBefore) {
+        ipBefore = getIpBefore.replace("=", "");
+      } else {
+        ipBefore = null;
+      }
+
       try {
         const res = await getUserIp();
         const ipAfter = res?.data.ip;
 
         if (ipBefore != ipAfter) {
-          localStorage.setItem("userIp", ipAfter);
+          // localStorage.setItem("userIp", ipAfter);
+          setCookie("user-ip", ipAfter, {
+            expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+            secure: true,
+            sameSite: "strict",
+          });
         }
         resolve(ipAfter);
       } catch (err) {
-        localStorage.setItem("userIp", "");
+        // localStorage.setItem("userIp", "");
+        setCookie("user-ip", "", {
+          expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+          secure: true,
+          sameSite: "strict",
+        });
         reject(err);
       }
     });
@@ -220,8 +235,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
           });
           try {
             await getIp();
-            const ip = localStorage.getItem("userIp") ?? null;
-
             if (router.pathname != "/auth/callback") {
               try {
                 const resToken = await getToken();
@@ -240,17 +253,14 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
                     await handleDeleteToken(token, callbackUrl);
                   } else {
                     const decryptedData = decryptData(encryptedData);
-                    const ipChanged = decryptedData.ip != ip;
                     const tokenChanged = decryptedData.token != token;
 
-                    if (ipChanged || tokenChanged) {
+                    if (tokenChanged) {
                       try {
                         const resLogout = await logoutUser(token);
 
                         if (resLogout.status === 200) {
-                          if (ipChanged) {
-                            await handleLogout(callbackUrl, "Your ip address has changed. Please log in again.");
-                          } else if (tokenChanged) {
+                          if (tokenChanged) {
                             await handleLogout(callbackUrl, "Your token has changed. Please log in again.");
                           }
                         }
