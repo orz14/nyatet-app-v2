@@ -8,9 +8,9 @@ export function roleNameFormat(role: string) {
     .join(" ");
 }
 
-export function timeFormat(time: string) {
+export function timeFormat(time: string, pattern?: string) {
   const date = new Date(time);
-  return format(date, "d MMMM yyyy HH:mm", { locale: id });
+  return format(date, pattern ?? "d MMMM yyyy HH:mm", { locale: id });
 }
 
 export function capitalize(str: string) {
