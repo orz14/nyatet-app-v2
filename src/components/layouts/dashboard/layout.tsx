@@ -8,7 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="container min-h-svh flex flex-col justify-between">
         <div>
           <Header />
-          <main className="relative flex flex-col lg:flex-row gap-4">
+          <main className="relative flex flex-col xl:flex-row gap-4">
             <Navigation />
             <section className="relative w-full h-max bg-gray-950 border border-gray-900 rounded-lg p-4 z-10">{children}</section>
           </main>
