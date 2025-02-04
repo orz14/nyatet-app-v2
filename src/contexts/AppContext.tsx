@@ -5,7 +5,7 @@ import Offline from "@/components/Offline";
 import useService from "@/configs/api/service";
 import useAuth from "@/configs/api/auth";
 import { useToast } from "@/hooks/use-toast";
-import { decryptData, encryptData, encryptString } from "@/lib/crypto";
+import { decryptData, encryptData } from "@/lib/crypto";
 import { Comfortaa } from "next/font/google";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { Toaster } from "@/components/ui/toaster";
@@ -40,7 +40,7 @@ type UserType = {
   name: string | null;
   username: string | null;
   email: string | null;
-  roleId: string | null;
+  roleId: number | null;
   avatar: string | null;
 };
 
@@ -78,7 +78,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       name: credentials.data.data.name,
       username: credentials.data.data.username,
       email: credentials.data.data.email,
-      roleId: encryptString(credentials.data.data.role_id),
+      roleId: credentials.data.data.role_id,
       avatar: credentials.data.data.avatar,
     };
 
