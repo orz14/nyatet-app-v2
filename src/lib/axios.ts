@@ -21,8 +21,9 @@ axiosInstance.interceptors.request.use(
     }
 
     // User-IP
-    const userIp = getCookie("user-ip") ?? null;
-    if (userIp) {
+    const getUserIp = getCookie("user-ip") ?? null;
+    if (getUserIp) {
+      const userIp = getUserIp.replace(/=/g, "");
       config.headers["User-IP"] = userIp;
     }
 
