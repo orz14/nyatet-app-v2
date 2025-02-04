@@ -55,7 +55,7 @@ function UserIndexPage({ authLoading }: any) {
       <TableRow key={`loader-user-${index}`}>
         <TableCell>
           <TextSkeleton />
-          <TextSkeleton width="w-20" height="h-3" className="mt-1" />
+          <TextSkeleton width="w-8 sm:w-20" height="h-3" className="mt-1" />
         </TableCell>
         <TableCell>
           <TextSkeleton />

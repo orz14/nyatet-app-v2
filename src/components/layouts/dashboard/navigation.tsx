@@ -30,6 +30,10 @@ export default function Navigation() {
 
   const adminMenu = [
     {
+      href: "/tools",
+      label: "Tools",
+    },
+    {
       href: "/role",
       label: "Role Management",
     },
