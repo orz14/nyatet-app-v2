@@ -21,13 +21,7 @@ axiosInstance.interceptors.request.use(
     }
 
     // User-IP
-    const getUserIp = getCookie("user-ip") ?? null;
-    let userIp: string | null = "";
-    if (getUserIp) {
-      userIp = getUserIp.replace("=", "");
-    } else {
-      userIp = null;
-    }
+    const userIp = getCookie("user-ip") ?? null;
     if (userIp) {
       config.headers["User-IP"] = userIp;
     }
