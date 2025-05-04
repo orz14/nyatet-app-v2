@@ -27,6 +27,12 @@ axiosInstance.interceptors.request.use(
       config.headers["User-IP"] = userIp;
     }
 
+    // Fingerprint_
+    const getFingerprint = getCookie("fingerprint_") ?? null;
+    if (getFingerprint) {
+      config.headers["Fingerprint_"] = getFingerprint;
+    }
+
     // Authorization
     const encryptedData = localStorage.getItem("encryptedData") ?? null;
     if (encryptedData) {

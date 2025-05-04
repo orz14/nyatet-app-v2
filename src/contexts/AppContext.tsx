@@ -10,6 +10,8 @@ import { Comfortaa } from "next/font/google";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { Toaster } from "@/components/ui/toaster";
 import { getCookie, removeCookie, setCookie } from "@/lib/cookie";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
+// import useLoginLog from "@/configs/api/login-log";
 
 type AppContextType = {
   loadingContext: boolean;
@@ -50,6 +52,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const { logout: logoutUser } = useAuth();
   const { checkConnection } = useServer();
   const { getIp: getUserIp, setToken, getToken, removeToken } = useService();
+  // const { tokenInfo } = useLoginLog();
   const [loading, setLoading] = useState<boolean>(true);
   const [user, setUser] = useState<UserType | null>({
     name: "Loading ...",
@@ -74,6 +77,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   async function login(credentials: { data: LoginType }) {
     const token = credentials.data.token;
+    const fingerprint = getCookie("fingerprint_") ?? "";
     const user = {
       name: credentials.data.data.name,
       username: credentials.data.data.username,
@@ -83,7 +87,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     await setToken(token);
-    const encryptedData = encryptData({ token, user });
+    const encryptedData = encryptData({ token, fingerprint, user });
     if (encryptedData) {
       localStorage.setItem("encryptedData", encryptedData);
     }
@@ -100,6 +104,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     });
     await removeToken();
     removeCookie("user-ip");
+    removeCookie("fingerprint_");
     localStorage.removeItem("encryptedData");
   }
 
@@ -143,6 +148,25 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(true);
       router.push(url);
     }
+  }
+
+  async function deviceId() {
+    const fp = await FingerprintJS.load();
+    const result = await fp.get();
+    const deviceId = result.visitorId;
+    let fingerprint_: string = "";
+
+    if (deviceId != null && deviceId != undefined && deviceId != "") {
+      fingerprint_ = deviceId;
+    } else {
+      fingerprint_ = "";
+    }
+
+    setCookie("fingerprint_", fingerprint_, {
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      secure: true,
+      sameSite: "strict",
+    });
   }
 
   async function getIp() {
@@ -209,6 +233,50 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
+  type decryptedDataType = {
+    token: string;
+    fingerprint: string;
+    user: {
+      name: string;
+      username: string;
+      email: string;
+      roleId: number;
+      avatar: string;
+    };
+  };
+
+  async function next(token: string, decryptedData: decryptedDataType, callbackUrl: string | any) {
+    const fingerprint_ = getCookie("fingerprint_") ?? "";
+    const tokenChanged = decryptedData.token != token;
+    const fingerprintChanged = decryptedData.fingerprint != fingerprint_;
+
+    if (tokenChanged || fingerprintChanged) {
+      try {
+        const resLogout = await logoutUser(token);
+
+        if (resLogout.status === 200) {
+          if (tokenChanged) {
+            await handleLogout(callbackUrl, "Your token has changed. Please log in again.");
+          } else if (fingerprintChanged) {
+            await handleLogout(callbackUrl, "Your fingerprint has changed. Please log in again.");
+          }
+        }
+      } catch (err) {
+        if (err.status === 401) {
+          await handleLogout(callbackUrl, "Token not valid. Please log in again.");
+        }
+      }
+    }
+
+    setUser({
+      name: decryptedData.user.name,
+      username: decryptedData.user.username,
+      email: decryptedData.user.email,
+      roleId: decryptedData.user.roleId,
+      avatar: decryptedData.user.avatar,
+    });
+  }
+
   useEffect(() => {
     async function checkAccess() {
       setLoading(true);
@@ -216,6 +284,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       const callbackUrl = encodeURI(router.asPath);
 
       try {
+        await deviceId();
         await getIp();
         try {
           const resServer = await checkConnection();
@@ -234,41 +303,38 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
                   if (encryptedData) {
                     const decryptedData = decryptData(encryptedData);
                     const token = decryptedData.token;
-                    await handleDeleteToken(token, null);
+                    // await handleDeleteToken(token, null);
+                    await setToken(token);
+                    await next(token, decryptedData, callbackUrl);
                   }
                 } else if (resToken.status === 200) {
                   const token = resToken?.data.token;
                   const encryptedData = localStorage.getItem("encryptedData") ?? null;
 
                   if (!encryptedData) {
+                    // cek token fingerprint di database
+                    // jika cocok maka buat encryptedData jika tidak maka handleDeleteToken
+
+                    // const fingerprint_ = getCookie("fingerprint_") ?? "";
+                    // try {
+                    //   const resTokenInfo = await tokenInfo();
+                    //   if (resTokenInfo?.status === 200) {
+                    //     const resFingerprint = resTokenInfo?.data.data.fingerprint;
+                    //     if (fingerprint_ == resFingerprint) {
+                    //       // buat encryptedData
+                    //     } else {
+                    //       await handleDeleteToken(token, callbackUrl);
+                    //     }
+                    //   }
+                    // } catch (err) {
+                    //   console.log("🚀 ~ checkAccess ~ err:", err);
+                    //   await handleDeleteToken(token, callbackUrl);
+                    // }
+
                     await handleDeleteToken(token, callbackUrl);
                   } else {
                     const decryptedData = decryptData(encryptedData);
-                    const tokenChanged = decryptedData.token != token;
-
-                    if (tokenChanged) {
-                      try {
-                        const resLogout = await logoutUser(token);
-
-                        if (resLogout.status === 200) {
-                          if (tokenChanged) {
-                            await handleLogout(callbackUrl, "Your token has changed. Please log in again.");
-                          }
-                        }
-                      } catch (err) {
-                        if (err.status === 401) {
-                          await handleLogout(callbackUrl, "Token not valid. Please log in again.");
-                        }
-                      }
-                    }
-
-                    setUser({
-                      name: decryptedData.user.name,
-                      username: decryptedData.user.username,
-                      email: decryptedData.user.email,
-                      roleId: decryptedData.user.roleId,
-                      avatar: decryptedData.user.avatar,
-                    });
+                    await next(token, decryptedData, callbackUrl);
                   }
                 }
               } catch (err) {

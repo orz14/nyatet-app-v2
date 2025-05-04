@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import Card from "@/components/Card";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Loader2 } from "lucide-react";
@@ -14,6 +14,9 @@ import useAuth from "@/configs/api/auth";
 import { sanitizeInput } from "@/utils/sanitizeInput";
 import { useAppContext } from "@/contexts/AppContext";
 import FormField from "@/components/FormField";
+import { decryptData } from "@/lib/crypto";
+import useService from "@/configs/api/service";
+import { removeCookie } from "@/lib/cookie";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,6 +27,52 @@ export default function LoginPage() {
   const [errUsername, setErrUsername] = useState<string | null>(null);
   const [errPassword, setErrPassword] = useState<string | null>(null);
   const callbackUrl = router.query?.callbackUrl as string | undefined;
+  const { getToken } = useService();
+  const attemptRef = useRef<number>(0);
+  const intervalRef = useRef<any>(null);
+
+  useEffect(() => {
+    async function checktoken() {
+      if (attemptRef.current >= 3) {
+        clearInterval(intervalRef.current);
+        return;
+      }
+
+      try {
+        const resToken = await getToken();
+        if (resToken?.status === 200) {
+          const token = resToken?.data.token;
+          const encryptedData = localStorage.getItem("encryptedData") ?? null;
+          if (encryptedData) {
+            const decryptedData = decryptData(encryptedData);
+            if (decryptedData.token == token) {
+              router.push(callbackUrl ?? "/todo");
+            } else {
+              localStorage.removeItem("encryptedData");
+              removeCookie("fingerprint_");
+              removeCookie("token");
+              removeCookie("user-ip");
+            }
+          } else {
+            removeCookie("fingerprint_");
+            removeCookie("token");
+            removeCookie("user-ip");
+          }
+        } else if (resToken?.status === 204) {
+          attemptRef.current += 1;
+          if (attemptRef.current >= 3) {
+            clearInterval(intervalRef.current);
+          }
+        }
+      } catch (err) {
+        console.log("🚀 ~ checktoken ~ err:", err);
+      }
+    }
+
+    intervalRef.current = setInterval(checktoken, 2000);
+
+    return () => clearInterval(intervalRef.current);
+  }, []);
 
   type FormikType = {
     username: string;
