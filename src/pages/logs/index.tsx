@@ -13,6 +13,7 @@ import RefreshDataButton from "@/components/dashboard/RefreshDataButton";
 import TextSkeleton from "@/components/skeleton/TextSkeleton";
 import Pagination from "@/components/dashboard/Pagination";
 import AuthorizationCheckLoader from "@/components/loader/AuthorizationCheckLoader";
+import { writeLogClient } from "@/lib/logClient";
 
 function LogsIndexPage({ authLoading }: any) {
   const title = "Logs";
@@ -50,6 +51,7 @@ function LogsIndexPage({ authLoading }: any) {
           variant: "destructive",
           description: err.message,
         });
+        await writeLogClient("error", err.message);
       }
     } finally {
       setLoading(false);

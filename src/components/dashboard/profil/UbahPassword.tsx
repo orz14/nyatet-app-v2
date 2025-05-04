@@ -9,6 +9,7 @@ import useLogout from "@/hooks/useLogout";
 import { Loader2 } from "lucide-react";
 import useProfile from "@/configs/api/profile";
 import FormField from "@/components/FormField";
+import { writeLogClient } from "@/lib/logClient";
 
 export default function UbahPassword() {
   const { loadingContext } = useAppContext();
@@ -79,6 +80,7 @@ export default function UbahPassword() {
             variant: "destructive",
             description: err.message,
           });
+          await writeLogClient("error", err.message);
         }
       } finally {
         setLoading(false);

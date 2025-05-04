@@ -11,6 +11,7 @@ import { useState } from "react";
 import { sanitizeInput } from "@/utils/sanitizeInput";
 import { Loader2 } from "lucide-react";
 import FormField from "@/components/FormField";
+import { writeLogClient } from "@/lib/logClient";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -92,6 +93,7 @@ export default function RegisterPage() {
           }
         } else {
           setError(err.message);
+          await writeLogClient("error", err.message);
         }
 
         setLoading(false);

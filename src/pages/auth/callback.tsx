@@ -3,6 +3,7 @@ import useAuth from "@/configs/api/auth";
 import { useAppContext } from "@/contexts/AppContext";
 import { useToast } from "@/hooks/use-toast";
 import useLogout from "@/hooks/useLogout";
+import { writeLogClient } from "@/lib/logClient";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -36,6 +37,8 @@ export default function AuthorizationCallbackPage() {
           variant: "destructive",
           description: err.message,
         });
+
+        await writeLogClient("error", err.message);
 
         router.push("/auth/login");
       }

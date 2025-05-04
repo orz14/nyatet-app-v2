@@ -10,6 +10,7 @@ import useLogout from "@/hooks/useLogout";
 import { Loader2 } from "lucide-react";
 import FormField from "@/components/FormField";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { writeLogClient } from "@/lib/logClient";
 
 type AddRoleType = {
   fetchFunction: any;
@@ -67,6 +68,7 @@ export default function AddRole({ fetchFunction }: AddRoleType) {
             variant: "destructive",
             description: err.message,
           });
+          await writeLogClient("error", err.message);
         }
       } finally {
         setLoading(false);

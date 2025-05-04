@@ -17,6 +17,7 @@ import FormField from "@/components/FormField";
 import { decryptData } from "@/lib/crypto";
 import useService from "@/configs/api/service";
 import { removeCookie } from "@/lib/cookie";
+import { writeLogClient } from "@/lib/logClient";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -65,7 +66,7 @@ export default function LoginPage() {
           }
         }
       } catch (err) {
-        console.log("🚀 ~ checktoken ~ err:", err);
+        await writeLogClient("error", err.message);
       }
     }
 
@@ -119,6 +120,7 @@ export default function LoginPage() {
           }
         } else {
           setError(err.message);
+          await writeLogClient("error", err.message);
         }
 
         setLoading(false);

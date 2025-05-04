@@ -11,6 +11,7 @@ import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { Toaster } from "@/components/ui/toaster";
 import { getCookie, removeCookie, setCookie } from "@/lib/cookie";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import { writeLogClient } from "@/lib/logClient";
 // import useLoginLog from "@/configs/api/login-log";
 
 type AppContextType = {
@@ -327,7 +328,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
                     //     }
                     //   }
                     // } catch (err) {
-                    //   console.log("🚀 ~ checkAccess ~ err:", err);
+                    //   await writeLogClient("error", err.message);
                     //   await handleDeleteToken(token, callbackUrl);
                     // }
 
@@ -338,19 +339,16 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
                   }
                 }
               } catch (err) {
-                console.log("🚀 ~ checkAccess ~ err:", err);
+                await writeLogClient("error", err.message);
               }
             }
           }
         } catch (err) {
-          if (err.status === 500) {
-            setOffline(true);
-          } else {
-            setOffline(true);
-          }
+          setOffline(true);
+          await writeLogClient("error", err.message);
         }
       } catch (err) {
-        console.log("🚀 ~ checkAccess ~ err:", err);
+        await writeLogClient("error", err.message);
       } finally {
         setLoading(false);
       }

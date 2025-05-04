@@ -4,6 +4,7 @@ import useAuth from "@/configs/api/auth";
 import { useAppContext } from "@/contexts/AppContext";
 import IsAdmin from "@/hoc/IsAdmin";
 import { useToast } from "@/hooks/use-toast";
+import { writeLogClient } from "@/lib/logClient";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -43,6 +44,7 @@ export default function TestingPage() {
           variant: "destructive",
           description: err.message,
         });
+        await writeLogClient("error", err.message);
       }
       setLoading(false);
     }
