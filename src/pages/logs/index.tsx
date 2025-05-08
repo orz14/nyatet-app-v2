@@ -51,7 +51,7 @@ function LogsIndexPage({ authLoading }: any) {
           variant: "destructive",
           description: err.message,
         });
-        await writeLogClient("error", err.message);
+        await writeLogClient("error", err);
       }
     } finally {
       setLoading(false);

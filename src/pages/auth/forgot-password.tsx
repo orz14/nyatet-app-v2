@@ -61,7 +61,7 @@ export default function ForgotPasswordPage() {
             type: false,
             message: err.message,
           });
-          await writeLogClient("error", err.message);
+          await writeLogClient("error", err);
         }
       } finally {
         setLoading(false);

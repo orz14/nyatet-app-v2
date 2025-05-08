@@ -75,7 +75,7 @@ export default function ResetPassword() {
           setError(err.response.data.message);
         } else {
           setError(err.message);
-          await writeLogClient("error", err.message);
+          await writeLogClient("error", err);
         }
       } finally {
         setLoading(false);

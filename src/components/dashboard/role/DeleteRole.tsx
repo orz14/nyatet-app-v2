@@ -48,7 +48,7 @@ export default function DeleteRole({ id, fetchFunction }: DeleteRoleType) {
           variant: "destructive",
           description: err.message,
         });
-        await writeLogClient("error", err.message);
+        await writeLogClient("error", err);
       }
     } finally {
       setLoading(false);

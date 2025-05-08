@@ -66,7 +66,7 @@ export default function LoginPage() {
           }
         }
       } catch (err) {
-        await writeLogClient("error", err.message);
+        await writeLogClient("error", err);
       }
     }
 
@@ -120,7 +120,7 @@ export default function LoginPage() {
           }
         } else {
           setError(err.message);
-          await writeLogClient("error", err.message);
+          await writeLogClient("error", err);
         }
 
         setLoading(false);

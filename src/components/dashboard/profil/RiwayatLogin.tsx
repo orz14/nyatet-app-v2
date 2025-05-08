@@ -43,7 +43,7 @@ export default function RiwayatLogin() {
         setLogs(res?.data.logs);
       }
     } catch (err) {
-      await writeLogClient("error", err.message);
+      await writeLogClient("error", err);
     } finally {
       setLoading(false);
     }
@@ -101,7 +101,7 @@ export default function RiwayatLogin() {
           variant: "destructive",
           description: err.message,
         });
-        await writeLogClient("error", err.message);
+        await writeLogClient("error", err);
         await fetchLoginLog();
       }
     } finally {

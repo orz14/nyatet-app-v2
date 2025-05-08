@@ -34,7 +34,7 @@ if (typeof window !== "undefined") {
           });
         }
       } catch (err) {
-        await writeLogClient("error", err.message);
+        await writeLogClient("error", err);
         window.location.reload();
       }
     }

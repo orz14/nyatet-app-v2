@@ -9,7 +9,7 @@ type LogLevel = "info" | "warning" | "error";
 interface LogEntry {
   timestamp: string;
   level: LogLevel;
-  message: string;
+  content: any;
 }
 
 function getTimestamp(): string {
@@ -31,11 +31,11 @@ function getTimestamp(): string {
   return `${year}-${month}-${day} ${time}`;
 }
 
-function writeLog(level: LogLevel, message: string): void {
+function writeLog(level: LogLevel, content: any): void {
   const logEntry: LogEntry = {
     timestamp: getTimestamp(),
     level,
-    message,
+    content,
   };
 
   const logDir = path.dirname(LOG_FILE_PATH);
@@ -73,12 +73,12 @@ function readLogs(): LogEntry[] {
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
-    const { level, message } = req.body;
-    if (!level || !message) {
-      return res.status(400).json({ error: "Level dan message dibutuhkan" });
+    const { level, content } = req.body;
+    if (!level || !content) {
+      return res.status(400).json({ error: "Level dan content dibutuhkan" });
     }
 
-    writeLog(level, message);
+    writeLog(level, content);
     return res.status(200).json({ success: true });
   }
 

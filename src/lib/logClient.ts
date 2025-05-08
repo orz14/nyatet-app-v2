@@ -3,15 +3,15 @@ type LogLevel = "info" | "warning" | "error";
 interface LogEntry {
   timestamp: string;
   level: LogLevel;
-  message: string;
+  content: any;
 }
 
-export async function writeLogClient(level: LogLevel, message: string): Promise<boolean> {
+export async function writeLogClient(level: LogLevel, content: any): Promise<boolean> {
   try {
     const res = await fetch("/api/log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ level, message }),
+      body: JSON.stringify({ level, content }),
     });
 
     return res.ok;

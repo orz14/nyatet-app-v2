@@ -53,7 +53,7 @@ export default function Tools({ action }: { action: string }) {
           variant: "destructive",
           description: err.message,
         });
-        await writeLogClient("error", err.message);
+        await writeLogClient("error", err);
       }
     } finally {
       setLoading(false);
@@ -92,7 +92,7 @@ export default function Tools({ action }: { action: string }) {
               description: err.message,
             });
 
-            await writeLogClient("error", err.message);
+            await writeLogClient("error", err);
 
             setTimeout(() => {
               window.location.reload();
@@ -113,7 +113,7 @@ export default function Tools({ action }: { action: string }) {
           variant: "destructive",
           description: err.message,
         });
-        await writeLogClient("error", err.message);
+        await writeLogClient("error", err);
       }
     } finally {
       setLoading(false);

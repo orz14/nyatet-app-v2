@@ -339,7 +339,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
                     //     }
                     //   }
                     // } catch (err) {
-                    //   await writeLogClient("error", err.message);
+                    //   await writeLogClient("error", err);
                     //   await handleDeleteToken(token, callbackUrl);
                     // }
 
@@ -350,16 +350,16 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
                   }
                 }
               } catch (err) {
-                await writeLogClient("error", err.message);
+                await writeLogClient("error", err);
               }
             }
           }
         } catch (err) {
           setOffline(true);
-          await writeLogClient("error", err.message);
+          await writeLogClient("error", err);
         }
       } catch (err) {
-        await writeLogClient("error", err.message);
+        await writeLogClient("error", err);
       } finally {
         setLoading(false);
       }

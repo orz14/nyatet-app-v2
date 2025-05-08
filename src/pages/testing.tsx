@@ -44,7 +44,7 @@ export default function TestingPage() {
           variant: "destructive",
           description: err.message,
         });
-        await writeLogClient("error", err.message);
+        await writeLogClient("error", err);
       }
       setLoading(false);
     }

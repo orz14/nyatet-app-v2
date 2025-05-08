@@ -74,7 +74,7 @@ export default function EditRole({ data, fetchFunction }: EditRoleType) {
             variant: "destructive",
             description: err.message,
           });
-          await writeLogClient("error", err.message);
+          await writeLogClient("error", err);
         }
       } finally {
         setLoading(false);

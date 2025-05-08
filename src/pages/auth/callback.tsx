@@ -38,7 +38,7 @@ export default function AuthorizationCallbackPage() {
           description: err.message,
         });
 
-        await writeLogClient("error", err.message);
+        await writeLogClient("error", err);
 
         router.push("/auth/login");
       }

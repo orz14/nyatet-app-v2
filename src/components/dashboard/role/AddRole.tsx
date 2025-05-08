@@ -68,7 +68,7 @@ export default function AddRole({ fetchFunction }: AddRoleType) {
             variant: "destructive",
             description: err.message,
           });
-          await writeLogClient("error", err.message);
+          await writeLogClient("error", err);
         }
       } finally {
         setLoading(false);

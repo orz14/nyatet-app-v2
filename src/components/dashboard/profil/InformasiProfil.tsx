@@ -78,7 +78,7 @@ export default function InformasiProfil() {
             variant: "destructive",
             description: err.message,
           });
-          await writeLogClient("error", err.message);
+          await writeLogClient("error", err);
         }
       } finally {
         setLoading(false);

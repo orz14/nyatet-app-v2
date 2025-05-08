@@ -93,7 +93,7 @@ export default function RegisterPage() {
           }
         } else {
           setError(err.message);
-          await writeLogClient("error", err.message);
+          await writeLogClient("error", err);
         }
 
         setLoading(false);
