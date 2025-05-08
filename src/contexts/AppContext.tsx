@@ -152,15 +152,26 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function deviceId() {
+    let fpb_: string = "";
+    const getFpb_ = localStorage.getItem("fpb_") ?? null;
+    if (getFpb_) {
+      fpb_ = getFpb_;
+    } else {
+      const bytes = new Uint8Array(32 / 2);
+      crypto.getRandomValues(bytes);
+      fpb_ = Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+      localStorage.setItem("fpb_", fpb_);
+    }
+
+    let fingerprint_: string = "";
     const fp = await FingerprintJS.load();
     const result = await fp.get();
     const deviceId = result.visitorId;
-    let fingerprint_: string = "";
 
     if (deviceId != null && deviceId != undefined && deviceId != "") {
       fingerprint_ = deviceId;
     } else {
-      fingerprint_ = "";
+      fingerprint_ = fpb_;
     }
 
     setCookie("fingerprint_", fingerprint_, {
