@@ -9,9 +9,9 @@ import { decryptData, encryptData } from "@/lib/crypto";
 import { Comfortaa } from "next/font/google";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { Toaster } from "@/components/ui/toaster";
-import { getCookie, removeCookie, setCookie } from "@/lib/cookie";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { writeLogClient } from "@/lib/logClient";
+import { deleteCookie, getCookie, setCookie } from "cookies-next";
 // import useLoginLog from "@/configs/api/login-log";
 
 type AppContextType = {
@@ -104,8 +104,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       avatar: "https://cdn.jsdelivr.net/gh/orz14/orzcode@main/img/blank.webp",
     });
     await removeToken();
-    removeCookie("user-ip");
-    removeCookie("fingerprint_");
+    deleteCookie("user-ip", { path: "/" });
+    deleteCookie("fingerprint_", { path: "/" });
     localStorage.removeItem("encryptedData");
   }
 
@@ -175,7 +175,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     setCookie("fingerprint_", fingerprint_, {
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      path: "/",
+      maxAge: 60 * 60 * 24,
       secure: true,
       sameSite: "strict",
     });
@@ -183,7 +184,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   async function getIp() {
     return new Promise(async (resolve, reject) => {
-      const getIpBefore = getCookie("user-ip") ?? null;
+      const getIpBefore = (await getCookie("user-ip")) ?? null;
       let ipBefore: string | null = "";
       if (getIpBefore) {
         ipBefore = getIpBefore.replace("=", "");
@@ -197,7 +198,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (ipBefore != ipAfter) {
           setCookie("user-ip", ipAfter, {
-            expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+            path: "/",
+            maxAge: 60 * 60 * 24,
             secure: true,
             sameSite: "strict",
           });
@@ -205,7 +207,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         resolve(ipAfter);
       } catch (err) {
         setCookie("user-ip", "", {
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+          path: "/",
+          maxAge: 60 * 60 * 24,
           secure: true,
           sameSite: "strict",
         });
@@ -303,7 +306,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
           if (resServer.status === 200) {
             setOffline(false);
             setCookie("CSRF-TOKEN", resServer?.data.csrf_token || "", {
-              expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+              path: "/",
+              maxAge: 60 * 60 * 24,
               secure: true,
               sameSite: "strict",
             });

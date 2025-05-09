@@ -3,8 +3,8 @@ import useServer from "@/configs/api/server";
 import useTools from "@/configs/api/tools";
 import { useToast } from "@/hooks/use-toast";
 import useLogout from "@/hooks/useLogout";
-import { setCookie } from "@/lib/cookie";
 import { writeLogClient } from "@/lib/logClient";
+import { setCookie } from "cookies-next";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
@@ -81,7 +81,8 @@ export default function Tools({ action }: { action: string }) {
             const resServer = await checkConnection();
             if (resServer?.status === 200) {
               setCookie("CSRF-TOKEN", resServer?.data.csrf_token || "", {
-                expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+                path: "/",
+                maxAge: 60 * 60 * 24,
                 secure: true,
                 sameSite: "strict",
               });

@@ -1,3 +1,4 @@
+import { deleteCookie } from "cookies-next";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = {
@@ -16,7 +17,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
     });
   }
 
-  res.setHeader("Set-Cookie", "token=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0");
+  deleteCookie("token", {
+    req,
+    res,
+    path: "/",
+  });
 
   res.status(200).json({
     status: true,

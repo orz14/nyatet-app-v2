@@ -1,8 +1,7 @@
 import axios from "axios";
-// import { getCookie, setCookie } from "./cookie";
 import { decryptData } from "./crypto";
 import { writeLogClient } from "./logClient";
-import { getCookie as getCookieNext, setCookie as setCookieNext } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
 
 const headers = {
   "Content-Type": "application/json",
@@ -22,13 +21,9 @@ if (typeof window !== "undefined") {
       try {
         const resServer = await axiosInstance.get(`${baseURL}/check-connection`);
         if (resServer?.status === 200) {
-          // setCookie("CSRF-TOKEN", resServer?.data.csrf_token || "", {
-          //   expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
-          //   secure: true,
-          //   sameSite: "strict",
-          // });
-          setCookieNext("CSRF-TOKEN", resServer?.data.csrf_token || "", {
-            maxAge: 60 * 60 * 24, // 1 hari (dalam detik)
+          setCookie("CSRF-TOKEN", resServer?.data.csrf_token || "", {
+            path: "/",
+            maxAge: 60 * 60 * 24,
             secure: true,
             sameSite: "strict",
           });
@@ -43,20 +38,20 @@ if (typeof window !== "undefined") {
   axiosInstance.interceptors.request.use(
     async (config) => {
       // X-CSRF-TOKEN
-      const csrfToken = getCookieNext("CSRF-TOKEN") ?? null;
+      const csrfToken = getCookie("CSRF-TOKEN") ?? null;
       if (csrfToken) {
         config.headers["X-CSRF-TOKEN"] = csrfToken;
       }
 
       // User-IP
-      const getUserIp = (await getCookieNext("user-ip")) ?? null;
+      const getUserIp = (await getCookie("user-ip")) ?? null;
       if (getUserIp) {
         const userIp = getUserIp.replace(/=/g, "");
         config.headers["User-IP"] = userIp;
       }
 
       // Fingerprint_
-      const getFingerprint = getCookieNext("fingerprint_") ?? null;
+      const getFingerprint = getCookie("fingerprint_") ?? null;
       if (getFingerprint) {
         config.headers["Fingerprint_"] = getFingerprint;
       }

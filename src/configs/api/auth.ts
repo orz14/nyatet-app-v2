@@ -91,6 +91,23 @@ function useAuth() {
     }
   }
 
+  async function setFingerprint(token: string) {
+    try {
+      const res = await axiosInstance.patch(
+        `${baseURL}/set-fingerprint`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   return {
     login,
     register,
@@ -98,6 +115,7 @@ function useAuth() {
     logout,
     resetPassword,
     newPassword,
+    setFingerprint,
   };
 }
 

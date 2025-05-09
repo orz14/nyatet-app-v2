@@ -16,8 +16,8 @@ import { useAppContext } from "@/contexts/AppContext";
 import FormField from "@/components/FormField";
 import { decryptData } from "@/lib/crypto";
 import useService from "@/configs/api/service";
-import { removeCookie } from "@/lib/cookie";
 import { writeLogClient } from "@/lib/logClient";
+import { deleteCookie } from "cookies-next";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -50,14 +50,14 @@ export default function LoginPage() {
               router.push(callbackUrl ?? "/todo");
             } else {
               localStorage.removeItem("encryptedData");
-              removeCookie("fingerprint_");
-              removeCookie("token");
-              removeCookie("user-ip");
+              deleteCookie("fingerprint_", { path: "/" });
+              deleteCookie("token", { path: "/" });
+              deleteCookie("user-ip", { path: "/" });
             }
           } else {
-            removeCookie("fingerprint_");
-            removeCookie("token");
-            removeCookie("user-ip");
+            deleteCookie("fingerprint_", { path: "/" });
+            deleteCookie("token", { path: "/" });
+            deleteCookie("user-ip", { path: "/" });
           }
         } else if (resToken?.status === 204) {
           attemptRef.current += 1;
