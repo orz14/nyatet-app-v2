@@ -3,6 +3,7 @@ import { DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle
 import useRole from "@/configs/api/role";
 import { useToast } from "@/hooks/use-toast";
 import useLogout from "@/hooks/useLogout";
+import { writeLogClient } from "@/lib/logClient";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
@@ -47,6 +48,7 @@ export default function DeleteRole({ id, fetchFunction }: DeleteRoleType) {
           variant: "destructive",
           description: err.message,
         });
+        await writeLogClient("error", err);
       }
     } finally {
       setLoading(false);

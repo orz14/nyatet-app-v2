@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+// import { writeLogClient } from "@/lib/logClient";
 // import useProfile from "@/configs/api/profile";
 // import useService from "@/configs/api/service";
 // import { useAppContext } from "@/contexts/AppContext";
@@ -48,6 +49,7 @@ export default function HapusAkun() {
   //         variant: "destructive",
   //         description: err.message,
   //       });
+  //       await writeLogClient("error", err);
   //     }
   //   } finally {
   //     setLoading(false);

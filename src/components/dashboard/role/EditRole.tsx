@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { sanitizeInput } from "@/utils/sanitizeInput";
+import { writeLogClient } from "@/lib/logClient";
 
 type EditRoleType = {
   data: {
@@ -73,6 +74,7 @@ export default function EditRole({ data, fetchFunction }: EditRoleType) {
             variant: "destructive",
             description: err.message,
           });
+          await writeLogClient("error", err);
         }
       } finally {
         setLoading(false);

@@ -10,6 +10,7 @@ import { LogOut } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import ConfirmationDialog from "../ConfirmationDialog";
+import { writeLogClient } from "@/lib/logClient";
 
 export default function RiwayatLogin() {
   const router = useRouter();
@@ -42,7 +43,7 @@ export default function RiwayatLogin() {
         setLogs(res?.data.logs);
       }
     } catch (err) {
-      console.log("🚀 ~ fetchLoginLog ~ err:", err);
+      await writeLogClient("error", err);
     } finally {
       setLoading(false);
     }
@@ -100,6 +101,7 @@ export default function RiwayatLogin() {
           variant: "destructive",
           description: err.message,
         });
+        await writeLogClient("error", err);
         await fetchLoginLog();
       }
     } finally {

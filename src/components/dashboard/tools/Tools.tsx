@@ -4,6 +4,7 @@ import useTools from "@/configs/api/tools";
 import { useToast } from "@/hooks/use-toast";
 import useLogout from "@/hooks/useLogout";
 import { setCookie } from "@/lib/cookie";
+import { writeLogClient } from "@/lib/logClient";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
@@ -52,6 +53,7 @@ export default function Tools({ action }: { action: string }) {
           variant: "destructive",
           description: err.message,
         });
+        await writeLogClient("error", err);
       }
     } finally {
       setLoading(false);
@@ -90,6 +92,8 @@ export default function Tools({ action }: { action: string }) {
               description: err.message,
             });
 
+            await writeLogClient("error", err);
+
             setTimeout(() => {
               window.location.reload();
             }, 2000);
@@ -109,6 +113,7 @@ export default function Tools({ action }: { action: string }) {
           variant: "destructive",
           description: err.message,
         });
+        await writeLogClient("error", err);
       }
     } finally {
       setLoading(false);

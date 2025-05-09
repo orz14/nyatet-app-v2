@@ -9,6 +9,7 @@ import useLogout from "@/hooks/useLogout";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import FormField from "@/components/FormField";
+import { writeLogClient } from "@/lib/logClient";
 
 export default function InformasiProfil() {
   const { loadingContext, user, updateUser } = useAppContext();
@@ -77,6 +78,7 @@ export default function InformasiProfil() {
             variant: "destructive",
             description: err.message,
           });
+          await writeLogClient("error", err);
         }
       } finally {
         setLoading(false);

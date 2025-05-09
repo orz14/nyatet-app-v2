@@ -18,6 +18,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import DeleteRole from "@/components/dashboard/role/DeleteRole";
 import EditRole from "@/components/dashboard/role/EditRole";
 import AuthorizationCheckLoader from "@/components/loader/AuthorizationCheckLoader";
+import { writeLogClient } from "@/lib/logClient";
 
 function RoleIndexPage({ authLoading }: any) {
   const title = "Role Management";
@@ -51,6 +52,7 @@ function RoleIndexPage({ authLoading }: any) {
           variant: "destructive",
           description: err.message,
         });
+        await writeLogClient("error", err);
       }
     } finally {
       setLoading(false);

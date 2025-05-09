@@ -10,6 +10,7 @@ import useAuth from "@/configs/api/auth";
 import MainLoader from "@/components/loader/MainLoader";
 import { useState } from "react";
 import useLogout from "@/hooks/useLogout";
+import { writeLogClient } from "@/lib/logClient";
 
 export default function Header() {
   const { user } = useAppContext();
@@ -34,6 +35,7 @@ export default function Header() {
           variant: "destructive",
           description: err.message,
         });
+        await writeLogClient("error", err);
       }
       setLoading(false);
     }

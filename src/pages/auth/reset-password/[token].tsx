@@ -11,6 +11,7 @@ import { sanitizeInput } from "@/utils/sanitizeInput";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import FormField from "@/components/FormField";
+import { writeLogClient } from "@/lib/logClient";
 
 export default function ResetPassword() {
   const router = useRouter();
@@ -74,6 +75,7 @@ export default function ResetPassword() {
           setError(err.response.data.message);
         } else {
           setError(err.message);
+          await writeLogClient("error", err);
         }
       } finally {
         setLoading(false);

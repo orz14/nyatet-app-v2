@@ -10,6 +10,7 @@ import * as Yup from "yup";
 import { sanitizeInput } from "@/utils/sanitizeInput";
 import { Loader2 } from "lucide-react";
 import FormField from "@/components/FormField";
+import { writeLogClient } from "@/lib/logClient";
 
 export default function ForgotPasswordPage() {
   const { resetPassword } = useAuth();
@@ -60,6 +61,7 @@ export default function ForgotPasswordPage() {
             type: false,
             message: err.message,
           });
+          await writeLogClient("error", err);
         }
       } finally {
         setLoading(false);
