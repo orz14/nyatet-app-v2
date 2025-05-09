@@ -11,23 +11,41 @@ import { useEffect } from "react";
 export default function AuthorizationCallbackPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { currentUser } = useAuth();
+  const { currentUser, setFingerprint } = useAuth();
   const { login } = useAppContext();
   const { logoutAuth } = useLogout();
 
   async function handleLogin(token: string) {
     try {
-      const res = await currentUser(token);
-      if (res?.status === 200) {
-        const credentials = {
-          data: {
-            token,
-            data: res?.data.data,
-          },
-        };
+      const resFingerprint = await setFingerprint(token);
+      if (resFingerprint?.status === 200) {
+        try {
+          const resUser = await currentUser(token);
+          if (resUser?.status === 200) {
+            const credentials = {
+              data: {
+                token,
+                data: resUser?.data.data,
+              },
+            };
 
-        await login(credentials);
-        router.push("/todo");
+            await login(credentials);
+            router.push("/todo");
+          }
+        } catch (err) {
+          if (err.status === 401) {
+            await logoutAuth(true);
+          } else {
+            toast({
+              variant: "destructive",
+              description: err.message,
+            });
+
+            await writeLogClient("error", err);
+
+            router.push("/auth/login");
+          }
+        }
       }
     } catch (err) {
       if (err.status === 401) {

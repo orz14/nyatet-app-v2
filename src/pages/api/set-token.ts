@@ -1,3 +1,4 @@
+import { setCookie } from "cookies-next";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = {
@@ -17,7 +18,15 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
     });
   }
 
-  res.setHeader("Set-Cookie", `token=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=604800`);
+  setCookie("token", token, {
+    req,
+    res,
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7,
+  });
 
   res.status(200).json({
     status: true,
