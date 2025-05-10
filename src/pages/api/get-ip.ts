@@ -1,3 +1,4 @@
+import { getClientIp } from "@/lib/getClientIp";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = {
@@ -7,12 +8,11 @@ type Data = {
 };
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress || null;
-  const realIp = Array.isArray(ip) ? ip[0] : ip;
+  const ip = getClientIp(req);
 
   res.status(200).json({
     status: true,
     statusCode: 200,
-    ip: realIp,
+    ip,
   });
 }
