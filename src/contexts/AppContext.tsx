@@ -243,6 +243,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       }
     } catch (err) {
       if (err.status === 401) {
+        await writeLogClient("info", "Token not valid from handleDeleteToken function.");
         await handleLogout(callbackUrl, "Token not valid. Please log in again.");
       }
     }
@@ -278,6 +279,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         }
       } catch (err) {
         if (err.status === 401) {
+          await writeLogClient("info", "Token not valid from next function.");
           await handleLogout(callbackUrl, "Token not valid. Please log in again.");
         }
       }
