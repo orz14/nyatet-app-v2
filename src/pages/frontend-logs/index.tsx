@@ -3,13 +3,15 @@ import RefreshDataButton from "@/components/dashboard/RefreshDataButton";
 import Layout from "@/components/layouts/dashboard/layout";
 import AuthorizationCheckLoader from "@/components/loader/AuthorizationCheckLoader";
 import MetaTag from "@/components/MetaTag";
+import TextSkeleton from "@/components/skeleton/TextSkeleton";
+import useLog from "@/configs/api/log";
 import AdminCheck from "@/hoc/AdminCheck";
+import { useToast } from "@/hooks/use-toast";
+import useLogout from "@/hooks/useLogout";
 import { writeLogClient } from "@/lib/logClient";
-import fs from "fs";
-import { useRouter } from "next/router";
-import path from "path";
+import { useEffect, useState } from "react";
 
-function FrontendLogsPage({ authLoading, log }: any) {
+function FrontendLogsPage({ authLoading }: any) {
   const title = "Frontend Logs";
   const breadcrumb = [
     {
@@ -19,10 +21,52 @@ function FrontendLogsPage({ authLoading, log }: any) {
     },
   ];
 
-  const router = useRouter();
+  const { toast } = useToast();
+  const { getNextLog } = useLog();
+  const { logoutAuth } = useLogout();
+  const [logs, setLogs] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  function handleRefresh() {
-    router.replace(router.pathname + "?refresh=" + Date.now());
+  async function fetchLogs() {
+    setLoading(true);
+    setLogs(null);
+    try {
+      const res = await getNextLog();
+      if (res?.status === 200) {
+        setLogs(res.data);
+      }
+    } catch (err) {
+      if (err.status === 401) {
+        await logoutAuth(true);
+      } else if (err.status === 404) {
+        toast({
+          variant: "destructive",
+          description: err.response.data.message,
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          description: err.message,
+        });
+        await writeLogClient("error", err);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchLogs();
+  }, []);
+
+  function Loader() {
+    return (
+      <div className="flex flex-col gap-y-2">
+        <TextSkeleton />
+        <TextSkeleton />
+        <TextSkeleton />
+      </div>
+    );
   }
 
   return (
@@ -50,16 +94,18 @@ function FrontendLogsPage({ authLoading, log }: any) {
           ) : (
             <>
               <div>
-                <RefreshDataButton actionFunction={handleRefresh} loading={false} />
+                <RefreshDataButton actionFunction={fetchLogs} loading={loading} />
               </div>
 
               <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-4">
-                {log.status === false ? (
+                {loading ? (
+                  <Loader />
+                ) : logs?.logs?.length > 0 ? (
+                  <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{JSON.stringify(logs.logs, null, 2)}</pre>
+                ) : (
                   <div className="w-full bg-indigo-950/20 text-center p-4 rounded-lg">
                     <span>No data available</span>
                   </div>
-                ) : (
-                  <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{JSON.stringify(log, null, 2)}</pre>
                 )}
               </div>
             </>
@@ -68,27 +114,6 @@ function FrontendLogsPage({ authLoading, log }: any) {
       </Layout>
     </>
   );
-}
-
-export async function getServerSideProps() {
-  const logPath = path.join(process.cwd(), "logs", "next-logs.json");
-  try {
-    const fileContents = fs.readFileSync(logPath, "utf-8");
-    const json = JSON.parse(fileContents);
-
-    return {
-      props: {
-        log: json,
-      },
-    };
-  } catch (err) {
-    await writeLogClient("error", err);
-    return {
-      props: {
-        log: { status: false },
-      },
-    };
-  }
 }
 
 export default AdminCheck(FrontendLogsPage);
