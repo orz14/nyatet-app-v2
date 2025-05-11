@@ -12,7 +12,7 @@ import { Toaster } from "@/components/ui/toaster";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { writeLogClient } from "@/lib/logClient";
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
-// import useLoginLog from "@/configs/api/login-log";
+import useLoginLog from "@/configs/api/login-log";
 
 type AppContextType = {
   loadingContext: boolean;
@@ -50,10 +50,10 @@ type UserType = {
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const { toast } = useToast();
-  const { logout: logoutUser } = useAuth();
+  const { currentUser, logout: logoutUser } = useAuth();
   const { checkConnection } = useServer();
   const { getIp: getUserIp, setToken, getToken, removeToken } = useService();
-  // const { tokenInfo } = useLoginLog();
+  const { tokenInfo } = useLoginLog();
   const [loading, setLoading] = useState<boolean>(true);
   const [user, setUser] = useState<UserType | null>({
     name: "Loading ...",
@@ -105,7 +105,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     });
     await removeToken();
     deleteCookie("user-ip", { path: "/" });
-    deleteCookie("fingerprint_", { path: "/" });
     localStorage.removeItem("encryptedData");
   }
 
@@ -152,34 +151,38 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function deviceId() {
-    let fpb_: string = "";
-    const getFpb_ = localStorage.getItem("fpb_") ?? null;
-    if (getFpb_) {
-      fpb_ = getFpb_;
-    } else {
-      const bytes = new Uint8Array(32 / 2);
-      crypto.getRandomValues(bytes);
-      fpb_ = Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
-      localStorage.setItem("fpb_", fpb_);
+    const getFingerprint = getCookie("fingerprint_") ?? null;
+    if (!getFingerprint) {
+      let fpb_: string = "";
+      const getFpb_ = localStorage.getItem("fpb_") ?? null;
+
+      if (getFpb_) {
+        fpb_ = getFpb_;
+      } else {
+        const bytes = new Uint8Array(32 / 2);
+        crypto.getRandomValues(bytes);
+        fpb_ = Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+        localStorage.setItem("fpb_", fpb_);
+      }
+
+      let fingerprint_: string = "";
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+      const deviceId = result.visitorId;
+
+      if (deviceId != null && deviceId != undefined && deviceId != "") {
+        fingerprint_ = deviceId;
+      } else {
+        fingerprint_ = fpb_;
+      }
+
+      setCookie("fingerprint_", fingerprint_, {
+        path: "/",
+        maxAge: 60 * 60 * 24,
+        secure: true,
+        sameSite: "strict",
+      });
     }
-
-    let fingerprint_: string = "";
-    const fp = await FingerprintJS.load();
-    const result = await fp.get();
-    const deviceId = result.visitorId;
-
-    if (deviceId != null && deviceId != undefined && deviceId != "") {
-      fingerprint_ = deviceId;
-    } else {
-      fingerprint_ = fpb_;
-    }
-
-    setCookie("fingerprint_", fingerprint_, {
-      path: "/",
-      maxAge: 60 * 60 * 24,
-      secure: true,
-      sameSite: "strict",
-    });
   }
 
   async function getIp() {
@@ -321,7 +324,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
                   if (encryptedData) {
                     const decryptedData = decryptData(encryptedData);
                     const token = decryptedData.token;
-                    // await handleDeleteToken(token, null);
                     await setToken(token);
                     await next(token, decryptedData, callbackUrl);
                   }
@@ -330,26 +332,40 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
                   const encryptedData = localStorage.getItem("encryptedData") ?? null;
 
                   if (!encryptedData) {
-                    // cek token fingerprint di database
-                    // jika cocok maka buat encryptedData jika tidak maka handleDeleteToken
+                    const fingerprint_ = getCookie("fingerprint_") ?? "";
+                    try {
+                      const resTokenInfo = await tokenInfo();
+                      if (resTokenInfo?.status === 200) {
+                        const resFingerprint = resTokenInfo?.data.data.fingerprint;
+                        if (fingerprint_ == resFingerprint) {
+                          try {
+                            const resUser = await currentUser(token);
+                            if (resUser?.status === 200) {
+                              const user = {
+                                name: resUser.data.data.name,
+                                username: resUser.data.data.username,
+                                email: resUser.data.data.email,
+                                roleId: resUser.data.data.role_id,
+                                avatar: resUser.data.data.avatar,
+                              };
 
-                    // const fingerprint_ = getCookie("fingerprint_") ?? "";
-                    // try {
-                    //   const resTokenInfo = await tokenInfo();
-                    //   if (resTokenInfo?.status === 200) {
-                    //     const resFingerprint = resTokenInfo?.data.data.fingerprint;
-                    //     if (fingerprint_ == resFingerprint) {
-                    //       // buat encryptedData
-                    //     } else {
-                    //       await handleDeleteToken(token, callbackUrl);
-                    //     }
-                    //   }
-                    // } catch (err) {
-                    //   await writeLogClient("error", err);
-                    //   await handleDeleteToken(token, callbackUrl);
-                    // }
-
-                    await handleDeleteToken(token, callbackUrl);
+                              const encryptedData = encryptData({ token, fingerprint: resFingerprint, user });
+                              if (encryptedData) {
+                                localStorage.setItem("encryptedData", encryptedData);
+                              }
+                            }
+                          } catch (err) {
+                            await writeLogClient("error", err);
+                            await handleDeleteToken(token, callbackUrl);
+                          }
+                        } else {
+                          await handleDeleteToken(token, callbackUrl);
+                        }
+                      }
+                    } catch (err) {
+                      await writeLogClient("error", err);
+                      await handleDeleteToken(token, callbackUrl);
+                    }
                   } else {
                     const decryptedData = decryptData(encryptedData);
                     await next(token, decryptedData, callbackUrl);
