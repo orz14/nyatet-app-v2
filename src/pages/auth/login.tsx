@@ -50,12 +50,10 @@ export default function LoginPage() {
               router.push(callbackUrl ?? "/todo");
             } else {
               localStorage.removeItem("encryptedData");
-              deleteCookie("fingerprint_", { path: "/" });
               deleteCookie("token", { path: "/" });
               deleteCookie("user-ip", { path: "/" });
             }
           } else {
-            deleteCookie("fingerprint_", { path: "/" });
             deleteCookie("token", { path: "/" });
             deleteCookie("user-ip", { path: "/" });
           }
