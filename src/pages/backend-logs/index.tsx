@@ -15,8 +15,8 @@ import Pagination from "@/components/dashboard/Pagination";
 import AuthorizationCheckLoader from "@/components/loader/AuthorizationCheckLoader";
 import { writeLogClient } from "@/lib/logClient";
 
-function LogsIndexPage({ authLoading }: any) {
-  const title = "Logs";
+function BackendlogsPage({ authLoading }: any) {
+  const title = "Backend Logs";
   const breadcrumb = [
     {
       isLink: false,
@@ -161,4 +161,4 @@ function LogsIndexPage({ authLoading }: any) {
   );
 }
 
-export default AdminCheck(LogsIndexPage);
+export default AdminCheck(BackendlogsPage);
