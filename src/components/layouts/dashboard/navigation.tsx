@@ -42,8 +42,12 @@ export default function Navigation() {
       label: "User Management",
     },
     {
-      href: "/logs",
-      label: "Logs",
+      href: "/backend-logs",
+      label: "Backend Logs",
+    },
+    {
+      href: "/frontend-logs",
+      label: "Frontend Logs",
     },
   ];
 
