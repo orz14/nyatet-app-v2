@@ -239,6 +239,13 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function handleDeleteToken(token: string, callbackUrl: string | any) {
+    // DEBUG START
+    const data = {
+      token,
+      callbackUrl,
+    };
+    // DEBUG END
+
     try {
       const resLogout = await logoutUser(token);
       if (resLogout.status === 200) {
@@ -246,7 +253,10 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       }
     } catch (err) {
       if (err.status === 401) {
-        await writeLogClient("info", "Token not valid from handleDeleteToken function.");
+        await writeLogClient("warning", {
+          message: "Token not valid from handleDeleteToken function.",
+          data,
+        });
         await handleLogout(callbackUrl, "Token not valid. Please log in again.");
       }
     }
@@ -269,6 +279,17 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     const tokenChanged = decryptedData.token != token;
     const fingerprintChanged = decryptedData.fingerprint != fingerprint_;
 
+    // DEBUG START
+    const data = {
+      token,
+      decryptedData,
+      callbackUrl,
+      fingerprint_,
+      tokenChanged,
+      fingerprintChanged,
+    };
+    // DEBUG END
+
     if (tokenChanged || fingerprintChanged) {
       try {
         const resLogout = await logoutUser(token);
@@ -282,7 +303,10 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         }
       } catch (err) {
         if (err.status === 401) {
-          await writeLogClient("info", "Token not valid from next function.");
+          await writeLogClient("warning", {
+            message: "Token not valid from next function.",
+            data,
+          });
           await handleLogout(callbackUrl, "Token not valid. Please log in again.");
         }
       }

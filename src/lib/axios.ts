@@ -57,10 +57,15 @@ if (typeof window !== "undefined") {
       }
 
       // Authorization
-      const encryptedData = localStorage.getItem("encryptedData") ?? null;
-      if (encryptedData) {
-        const decryptedData = decryptData(encryptedData);
-        config.headers["Authorization"] = `Bearer ${decryptedData.token}`;
+      const cookieToken = getCookie("token") ?? null;
+      if (cookieToken) {
+        config.headers["Authorization"] = `Bearer ${cookieToken}`;
+      } else {
+        const encryptedData = localStorage.getItem("encryptedData") ?? null;
+        if (encryptedData) {
+          const decryptedData = decryptData(encryptedData);
+          config.headers["Authorization"] = `Bearer ${decryptedData.token}`;
+        }
       }
 
       return config;
