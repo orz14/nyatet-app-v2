@@ -1,4 +1,8 @@
 import useAxiosInterceptors from "@/lib/axios";
+import { decryptData } from "@/lib/crypto";
+import { writeLogClient } from "@/lib/logClient";
+import axios from "axios";
+import { getCookie, setCookie } from "cookies-next";
 
 function useAuth() {
   const axiosInstance = useAxiosInterceptors();
@@ -49,19 +53,80 @@ function useAuth() {
     }
   }
 
-  async function logout(token?: string) {
-    const config = token
-      ? {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+  async function getCsrfToken(method: any) {
+    const baseURL = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api` : "https://be-nyatet.orzverse.com/api";
+
+    if (method && ["post", "put", "patch", "delete"].includes(method)) {
+      try {
+        const resServer = await axiosInstance.get(`${baseURL}/check-connection`);
+        if (resServer?.status === 200) {
+          setCookie("CSRF-TOKEN", resServer?.data.csrf_token || "", {
+            path: "/",
+            maxAge: 60 * 60 * 24,
+            secure: true,
+            sameSite: "strict",
+          });
         }
-      : {};
+      } catch (err) {
+        await writeLogClient("error", err);
+        window.location.reload();
+      }
+    }
+  }
+
+  async function logout(token?: string) {
+    // X-CSRF-TOKEN
+    const csrfToken = (await getCookie("CSRF-TOKEN")) ?? "";
+
+    // User-IP
+    let userIp: string = "";
+    const getUserIp = (await getCookie("user-ip")) ?? null;
+    if (getUserIp) {
+      const parsedUserIp = getUserIp.replace(/=/g, "");
+      userIp = parsedUserIp;
+    }
+
+    // Fingerprint_
+    const fingerprint = (await getCookie("fingerprint_")) ?? "";
+
+    // Authorization
+    let bearerToken: string = "";
+    if (token) {
+      bearerToken = `Bearer ${token}`;
+    } else {
+      const cookieToken = (await getCookie("token")) ?? null;
+      if (cookieToken) {
+        bearerToken = `Bearer ${cookieToken}`;
+      } else {
+        const encryptedData = localStorage.getItem("encryptedData") ?? null;
+        if (encryptedData) {
+          const decryptedData = decryptData(encryptedData);
+          bearerToken = `Bearer ${decryptedData.token}`;
+        }
+      }
+    }
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-TOKEN": csrfToken,
+        "User-IP": userIp,
+        Fingerprint_: fingerprint,
+        Authorization: bearerToken,
+      },
+    };
 
     try {
-      const res = await axiosInstance.delete(`${baseURL}/logout`, config);
+      const res = await axios.delete(`${baseURL}/logout`, config);
+      const method = res.config.method;
+      await getCsrfToken(method);
+
       return res;
     } catch (err) {
+      const method = err.config?.method;
+      await getCsrfToken(method);
+
       throw err;
     }
   }
