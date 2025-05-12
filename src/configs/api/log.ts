@@ -23,9 +23,19 @@ function useLog() {
     }
   }
 
+  async function clearNextLog() {
+    try {
+      const res = await axiosInstance.delete(`${baseURL}/next-log`);
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   return {
     getLog,
     getNextLog,
+    clearNextLog,
   };
 }
 

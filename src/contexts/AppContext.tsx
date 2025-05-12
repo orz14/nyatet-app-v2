@@ -301,6 +301,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     async function checkAccess() {
       setLoading(true);
       console.log("AppContext executed!");
+      await writeLogClient("info", "AppContext executed!");
       const callbackUrl = encodeURI(router.asPath);
 
       try {

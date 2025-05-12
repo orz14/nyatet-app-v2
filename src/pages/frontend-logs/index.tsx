@@ -4,6 +4,7 @@ import Layout from "@/components/layouts/dashboard/layout";
 import AuthorizationCheckLoader from "@/components/loader/AuthorizationCheckLoader";
 import MetaTag from "@/components/MetaTag";
 import TextSkeleton from "@/components/skeleton/TextSkeleton";
+import { Button } from "@/components/ui/button";
 import useLog from "@/configs/api/log";
 import AdminCheck from "@/hoc/AdminCheck";
 import { useToast } from "@/hooks/use-toast";
@@ -22,7 +23,7 @@ function FrontendLogsPage({ authLoading }: any) {
   ];
 
   const { toast } = useToast();
-  const { getNextLog } = useLog();
+  const { getNextLog, clearNextLog } = useLog();
   const { logoutAuth } = useLogout();
   const [logs, setLogs] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -59,6 +60,37 @@ function FrontendLogsPage({ authLoading }: any) {
     fetchLogs();
   }, []);
 
+  async function handleClearLogs() {
+    setLoading(true);
+    try {
+      const res = await clearNextLog();
+      if (res?.status === 200) {
+        toast({
+          variant: "default",
+          description: res.data.message,
+        });
+        await fetchLogs();
+      }
+    } catch (err) {
+      if (err.status === 401) {
+        await logoutAuth(true);
+      } else if (err.status === 500) {
+        toast({
+          variant: "destructive",
+          description: err.response.data.message,
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          description: err.message,
+        });
+        await writeLogClient("error", err);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
   function Loader() {
     return (
       <div className="flex flex-col gap-y-2">
@@ -93,8 +125,11 @@ function FrontendLogsPage({ authLoading }: any) {
             <AuthorizationCheckLoader />
           ) : (
             <>
-              <div>
+              <div className="flex items-center gap-x-2">
                 <RefreshDataButton actionFunction={fetchLogs} loading={loading} />
+                <Button type="button" variant={"outline"} onClick={handleClearLogs} disabled={loading}>
+                  Clear Logs
+                </Button>
               </div>
 
               <div className="w-full bg-gray-950 border border-gray-900 rounded-lg p-4">
