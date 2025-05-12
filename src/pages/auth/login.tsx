@@ -128,10 +128,14 @@ export default function LoginPage() {
 
   const { values, handleSubmit, handleChange, handleBlur, touched, errors } = formik;
 
-  function handleLoginSocialite(endpoint: string) {
+  async function handleLoginSocialite(endpoint: string) {
     setLoading(true);
-    window.location.href = endpoint;
-    setLoading(false);
+    try {
+      window.location.href = endpoint;
+    } catch (err) {
+      await writeLogClient("error", err);
+      setLoading(false);
+    }
   }
 
   return (
