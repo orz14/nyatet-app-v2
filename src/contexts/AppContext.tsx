@@ -401,8 +401,12 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
             }
           }
         } catch (err) {
-          setOffline(true);
-          await writeLogClient("error", err);
+          if (err.status === 401) {
+            await handleLogout(callbackUrl, "Token not valid. Please log in again.");
+          } else {
+            setOffline(true);
+            await writeLogClient("error", err);
+          }
         }
       } catch (err) {
         await writeLogClient("error", err);

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { decryptData } from "./crypto";
 import { writeLogClient } from "./logClient";
-import { getCookie, setCookie } from "cookies-next";
+import { deleteCookie, getCookie, setCookie } from "cookies-next";
 
 const headers = {
   "Content-Type": "application/json",
@@ -29,8 +29,15 @@ if (typeof window !== "undefined") {
           });
         }
       } catch (err) {
-        await writeLogClient("error", err);
-        window.location.reload();
+        if (err.status === 401) {
+          deleteCookie("token", { path: "/" });
+          deleteCookie("user-ip", { path: "/" });
+          localStorage.removeItem("encryptedData");
+          window.location.href = `${window.location.origin}/auth/login`;
+        } else {
+          await writeLogClient("error", err);
+          window.location.reload();
+        }
       }
     }
   }

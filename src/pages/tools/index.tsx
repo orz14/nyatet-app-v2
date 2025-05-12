@@ -43,6 +43,8 @@ function ToolsIndexPage({ authLoading }: any) {
                 <Tools action="backup-database" />
                 <Tools action="clear-optimize" />
                 <Tools action="clear-expired-token" />
+                <Tools action="clear-token" />
+                <Tools action="clear-password-token" />
               </div>
             </div>
           )}

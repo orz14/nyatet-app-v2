@@ -1,16 +1,13 @@
 import { Button } from "@/components/ui/button";
-import useServer from "@/configs/api/server";
 import useTools from "@/configs/api/tools";
 import { useToast } from "@/hooks/use-toast";
 import useLogout from "@/hooks/useLogout";
 import { writeLogClient } from "@/lib/logClient";
-import { setCookie } from "cookies-next";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
 export default function Tools({ action }: { action: string }) {
-  const { databaseBackup, optimizeClear, clearExpiredToken } = useTools();
-  const { checkConnection } = useServer();
+  const { databaseBackup, optimizeClear, clearExpiredToken, clearToken, clearPasswordToken } = useTools();
   const { toast } = useToast();
   const { logoutAuth } = useLogout();
   const [loading, setLoading] = useState<boolean>(false);
@@ -68,6 +65,10 @@ export default function Tools({ action }: { action: string }) {
         res = await optimizeClear();
       } else if (action == "clear-expired-token") {
         res = await clearExpiredToken();
+      } else if (action == "clear-token") {
+        res = await clearToken();
+      } else if (action == "clear-password-token") {
+        res = await clearPasswordToken();
       }
 
       if (res?.status === 200) {
@@ -75,31 +76,6 @@ export default function Tools({ action }: { action: string }) {
           variant: "default",
           description: res?.data.message,
         });
-
-        if (action == "clear-optimize") {
-          try {
-            const resServer = await checkConnection();
-            if (resServer?.status === 200) {
-              setCookie("CSRF-TOKEN", resServer?.data.csrf_token || "", {
-                path: "/",
-                maxAge: 60 * 60 * 24,
-                secure: true,
-                sameSite: "strict",
-              });
-            }
-          } catch (err) {
-            toast({
-              variant: "destructive",
-              description: err.message,
-            });
-
-            await writeLogClient("error", err);
-
-            setTimeout(() => {
-              window.location.reload();
-            }, 2000);
-          }
-        }
       }
     } catch (err) {
       if (err.status === 401) {
@@ -149,6 +125,8 @@ export default function Tools({ action }: { action: string }) {
   if (action == "backup-database") return <Component title="Backup Database" />;
   if (action == "clear-optimize") return <Component title="Clear Optimize" />;
   if (action == "clear-expired-token") return <Component title="Clear Expired Token" />;
+  if (action == "clear-token") return <Component title="Clear Token" />;
+  if (action == "clear-password-token") return <Component title="Clear Password Token" />;
 
   return null;
 }
