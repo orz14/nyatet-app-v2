@@ -15,6 +15,21 @@ export default function AuthorizationCallbackPage() {
   const { login } = useAppContext();
   const { logoutAuth } = useLogout();
 
+  async function handleCatch(err: any) {
+    if (err.status === 401) {
+      await logoutAuth(true);
+    } else {
+      toast({
+        variant: "destructive",
+        description: err.message,
+      });
+
+      await writeLogClient("error", err);
+
+      router.push("/auth/login");
+    }
+  }
+
   async function handleLogin(token: string) {
     try {
       const resFingerprint = await setFingerprint(token);
@@ -33,33 +48,11 @@ export default function AuthorizationCallbackPage() {
             router.push("/todo");
           }
         } catch (err) {
-          if (err.status === 401) {
-            await logoutAuth(true);
-          } else {
-            toast({
-              variant: "destructive",
-              description: err.message,
-            });
-
-            await writeLogClient("error", err);
-
-            router.push("/auth/login");
-          }
+          handleCatch(err);
         }
       }
     } catch (err) {
-      if (err.status === 401) {
-        await logoutAuth(true);
-      } else {
-        toast({
-          variant: "destructive",
-          description: err.message,
-        });
-
-        await writeLogClient("error", err);
-
-        router.push("/auth/login");
-      }
+      handleCatch(err);
     }
   }
 
