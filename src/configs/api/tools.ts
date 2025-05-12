@@ -31,10 +31,30 @@ function useTools() {
     }
   }
 
+  async function clearToken() {
+    try {
+      const res = await axiosInstance.delete(`${baseURL}/token/clear`);
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async function clearPasswordToken() {
+    try {
+      const res = await axiosInstance.delete(`${baseURL}/token/password/clear`);
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   return {
     databaseBackup,
     optimizeClear,
     clearExpiredToken,
+    clearToken,
+    clearPasswordToken,
   };
 }
 

@@ -2,7 +2,7 @@ import useAxiosInterceptors from "@/lib/axios";
 import { decryptData } from "@/lib/crypto";
 import { writeLogClient } from "@/lib/logClient";
 import axios from "axios";
-import { getCookie, setCookie } from "cookies-next";
+import { deleteCookie, getCookie, setCookie } from "cookies-next";
 
 function useAuth() {
   const axiosInstance = useAxiosInterceptors();
@@ -68,8 +68,15 @@ function useAuth() {
           });
         }
       } catch (err) {
-        await writeLogClient("error", err);
-        window.location.reload();
+        if (err.status === 401) {
+          deleteCookie("token", { path: "/" });
+          deleteCookie("user-ip", { path: "/" });
+          localStorage.removeItem("encryptedData");
+          window.location.href = `${window.location.origin}/auth/login`;
+        } else {
+          await writeLogClient("error", err);
+          window.location.reload();
+        }
       }
     }
   }
