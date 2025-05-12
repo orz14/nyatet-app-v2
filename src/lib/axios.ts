@@ -19,7 +19,7 @@ if (typeof window !== "undefined") {
 
     if (method && ["post", "put", "patch", "delete"].includes(method)) {
       try {
-        const resServer = await axiosInstance.get(`${baseURL}/check-connection`);
+        const resServer = await axios.get(`${baseURL}/check-connection`);
         if (resServer?.status === 200) {
           setCookie("CSRF-TOKEN", resServer?.data.csrf_token || "", {
             path: "/",
