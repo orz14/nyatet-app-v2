@@ -126,9 +126,6 @@ function useAuth() {
 
     try {
       const res = await axios.delete(`${baseURL}/logout`, config);
-      const method = res.config.method;
-      await getCsrfToken(method);
-
       return res;
     } catch (err) {
       const method = err.config?.method;

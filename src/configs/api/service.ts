@@ -1,4 +1,5 @@
 import useAxiosInterceptors from "@/lib/axios";
+import axios from "axios";
 
 function useService() {
   const axiosInstance = useAxiosInterceptors();
@@ -31,8 +32,15 @@ function useService() {
   }
 
   async function removeToken() {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    };
+
     try {
-      const res = await axiosInstance.post("/api/remove-token");
+      const res = await axios.post("/api/remove-token", {}, config);
       return res;
     } catch (err) {
       throw err;
