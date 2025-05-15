@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
           if (err.response.data.message.email) {
             setErrEmail(err.response.data.message.email[0]);
           }
-        } else if (err.status === 400 || err.status === 500) {
+        } else if (err.status === 404 || err.status === 429 || err.status === 500) {
           setStatus({
             type: err.response.data.status,
             message: err.response.data.message,

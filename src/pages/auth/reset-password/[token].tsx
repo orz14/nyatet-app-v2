@@ -71,7 +71,7 @@ export default function ResetPassword() {
           if (err.response.data.message.password) {
             setErrPassword(err.response.data.message.password[0]);
           }
-        } else if (err.status === 400 || err.status === 500) {
+        } else if (err.status === 404 || err.status === 400 || err.status === 500) {
           setError(err.response.data.message);
         } else {
           setError(err.message);
