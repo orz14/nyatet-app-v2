@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import useLog from "@/configs/api/log";
 import AdminCheck from "@/hoc/AdminCheck";
 import { useToast } from "@/hooks/use-toast";
-import useLogout from "@/hooks/useLogout";
+// import useLogout from "@/hooks/useLogout";
 import { writeLogClient } from "@/lib/logClient";
 import { useEffect, useState } from "react";
 
@@ -24,7 +24,7 @@ function FrontendLogsPage({ authLoading }: any) {
 
   const { toast } = useToast();
   const { getNextLog, clearNextLog } = useLog();
-  const { logoutAuth } = useLogout();
+  // const { logoutAuth } = useLogout();
   const [logs, setLogs] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -37,9 +37,7 @@ function FrontendLogsPage({ authLoading }: any) {
         setLogs(res.data);
       }
     } catch (err) {
-      if (err.status === 401) {
-        await logoutAuth(true);
-      } else if (err.status === 404) {
+      if (err.status === 404) {
         toast({
           variant: "destructive",
           description: err.response.data.message,
@@ -72,9 +70,7 @@ function FrontendLogsPage({ authLoading }: any) {
         await fetchLogs();
       }
     } catch (err) {
-      if (err.status === 401) {
-        await logoutAuth(true);
-      } else if (err.status === 500) {
+      if (err.status === 500) {
         toast({
           variant: "destructive",
           description: err.response.data.message,
