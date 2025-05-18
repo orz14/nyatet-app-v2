@@ -37,9 +37,7 @@ export default function HapusAkun() {
   //       router.push("/auth/login");
   //     }
   //   } catch (err) {
-  //     if (err.status === 401) {
-  //       await logoutAuth(true);
-  //     } else if (err.status === 500) {
+  //     if (err.status === 500) {
   //       toast({
   //         variant: "destructive",
   //         description: err.response.data.message,

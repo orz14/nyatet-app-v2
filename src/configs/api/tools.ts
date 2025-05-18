@@ -1,53 +1,14 @@
-import useAxiosInterceptors from "@/lib/axios";
+import useAxios from "@/hooks/useAxios";
 
 function useTools() {
-  const axiosInstance = useAxiosInterceptors();
+  const { axiosFetch } = useAxios();
   const baseURL = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api` : "https://be-nyatet.orzverse.com/api";
 
-  async function databaseBackup() {
-    try {
-      const res = await axiosInstance.post(`${baseURL}/database-backup`, {}, { responseType: "blob" });
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async function optimizeClear() {
-    try {
-      const res = await axiosInstance.post(`${baseURL}/optimize-clear`);
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async function clearExpiredToken() {
-    try {
-      const res = await axiosInstance.delete(`${baseURL}/token/expired/clear`);
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async function clearToken() {
-    try {
-      const res = await axiosInstance.delete(`${baseURL}/token/clear`);
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async function clearPasswordToken() {
-    try {
-      const res = await axiosInstance.delete(`${baseURL}/token/password/clear`);
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  }
+  const databaseBackup = () => axiosFetch("post", `${baseURL}/database-backup`, {}, { responseType: "blob" });
+  const optimizeClear = () => axiosFetch("post", `${baseURL}/optimize-clear`);
+  const clearExpiredToken = () => axiosFetch("delete", `${baseURL}/token/expired/clear`);
+  const clearToken = () => axiosFetch("delete", `${baseURL}/token/clear`);
+  const clearPasswordToken = () => axiosFetch("delete", `${baseURL}/token/password/clear`);
 
   return {
     databaseBackup,

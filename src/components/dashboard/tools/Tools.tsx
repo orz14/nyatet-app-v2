@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import useTools from "@/configs/api/tools";
 import { useToast } from "@/hooks/use-toast";
-import useLogout from "@/hooks/useLogout";
 import { writeLogClient } from "@/lib/logClient";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
@@ -9,14 +8,13 @@ import { useState } from "react";
 export default function Tools({ action }: { action: string }) {
   const { databaseBackup, optimizeClear, clearExpiredToken, clearToken, clearPasswordToken } = useTools();
   const { toast } = useToast();
-  const { logoutAuth } = useLogout();
   const [loading, setLoading] = useState<boolean>(false);
 
   async function handleBackupDownload() {
     setLoading(true);
     try {
       const res = await databaseBackup();
-      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const url = window.URL.createObjectURL(new Blob([res?.data]));
 
       const now = new Date();
       const day = String(now.getDate()).padStart(2, "0");
@@ -38,9 +36,7 @@ export default function Tools({ action }: { action: string }) {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      if (err.status === 401) {
-        await logoutAuth(true);
-      } else if (err.status === 404 || err.status === 500) {
+      if (err.status === 404 || err.status === 500) {
         toast({
           variant: "destructive",
           description: err.response.data.message,
@@ -78,9 +74,7 @@ export default function Tools({ action }: { action: string }) {
         });
       }
     } catch (err) {
-      if (err.status === 401) {
-        await logoutAuth(true);
-      } else if (err.status === 500) {
+      if (err.status === 500) {
         toast({
           variant: "destructive",
           description: err.response.data.message,
