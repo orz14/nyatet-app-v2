@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import useLoginLog from "@/configs/api/login-log";
 import { useToast } from "@/hooks/use-toast";
-import useLogout from "@/hooks/useLogout";
 import EachUtils from "@/utils/EachUtils";
 import { timeFormat } from "@/utils/formatters";
 import { LogOut } from "lucide-react";
@@ -16,7 +15,6 @@ export default function RiwayatLogin() {
   const router = useRouter();
   const { toast } = useToast();
   const { tokenInfo, getLoginLog, logoutToken } = useLoginLog();
-  const { logoutAuth } = useLogout();
   const [tokenName, setTokenName] = useState<any>(null);
   const [logs, setLogs] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -29,8 +27,8 @@ export default function RiwayatLogin() {
         setTokenName(res?.data.data.name);
       }
     } catch (err) {
-      if (err.status === 401) {
-        await logoutAuth(true);
+      if (err.status !== 401) {
+        await writeLogClient("error", err);
       }
     }
   }
@@ -88,9 +86,7 @@ export default function RiwayatLogin() {
         await fetchLoginLog();
       }
     } catch (err) {
-      if (err.status === 401) {
-        await logoutAuth(true);
-      } else if (err.status === 404 || err.status === 403 || err.status === 500) {
+      if (err.status === 404 || err.status === 403 || err.status === 500) {
         toast({
           variant: "destructive",
           description: err.response.data.message,

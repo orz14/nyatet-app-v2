@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import useRole from "@/configs/api/role";
 import { useToast } from "@/hooks/use-toast";
-import useLogout from "@/hooks/useLogout";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useFormik } from "formik";
@@ -22,7 +21,6 @@ type EditRoleType = {
 export default function EditRole({ data, fetchFunction }: EditRoleType) {
   const { update } = useRole();
   const { toast } = useToast();
-  const { logoutAuth } = useLogout();
   const [loading, setLoading] = useState<boolean>(false);
   const [errRole, setErrRole] = useState<string | null>(null);
 
@@ -50,9 +48,7 @@ export default function EditRole({ data, fetchFunction }: EditRoleType) {
           await fetchFunction();
         }
       } catch (err) {
-        if (err.status === 401) {
-          await logoutAuth(true);
-        } else if (err.status === 404) {
+        if (err.status === 404) {
           toast({
             variant: "destructive",
             description: err.response.data.message,

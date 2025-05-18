@@ -1,17 +1,10 @@
-import useAxiosInterceptors from "@/lib/axios";
+import useAxios from "@/hooks/useAxios";
 
 function useServer() {
-  const axiosInstance = useAxiosInterceptors();
+  const { axiosRaw } = useAxios();
   const baseURL = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api` : "https://be-nyatet.orzverse.com/api";
 
-  async function checkConnection() {
-    try {
-      const res = await axiosInstance.get(`${baseURL}/check-connection`);
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  }
+  const checkConnection = () => axiosRaw("get", `${baseURL}/check-connection`);
 
   return {
     checkConnection,

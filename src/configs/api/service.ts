@@ -1,51 +1,20 @@
-import useAxiosInterceptors from "@/lib/axios";
-import axios from "axios";
+import useAxios from "@/hooks/useAxios";
 
 function useService() {
-  const axiosInstance = useAxiosInterceptors();
+  const { axiosBasic, axiosRaw } = useAxios();
 
-  async function getIp() {
-    try {
-      const res = await axiosInstance.get("/api/get-ip");
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async function setToken(token: string) {
-    try {
-      const res = await axiosInstance.post("/api/set-token", { token });
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async function getToken() {
-    try {
-      const res = await axiosInstance.get("/api/get-token");
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async function removeToken() {
+  const getIp = () => axiosRaw("get", "/api/get-ip");
+  const setToken = (token: string) => axiosRaw("post", "/api/set-token", { token });
+  const getToken = () => axiosRaw("get", "/api/get-token");
+  const removeToken = () => {
     const config = {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
     };
-
-    try {
-      const res = await axios.post("/api/remove-token", {}, config);
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  }
+    return axiosBasic("post", "/api/remove-token", {}, config);
+  };
 
   return {
     getIp,

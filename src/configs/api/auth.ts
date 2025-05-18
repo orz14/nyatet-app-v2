@@ -1,13 +1,7 @@
 import useAxios from "@/hooks/useAxios";
-import useAxiosInterceptors from "@/lib/axios";
-// import { decryptData } from "@/lib/crypto";
-// import { writeLogClient } from "@/lib/logClient";
-// import axios from "axios";
-// import { deleteCookie, getCookie, setCookie } from "cookies-next";
 
 function useAuth() {
-  const axiosInstance = useAxiosInterceptors();
-  const { axiosLogout } = useAxios();
+  const { axiosRaw, axiosFetch, axiosLogout } = useAxios();
   const baseURL = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api/auth` : "https://be-nyatet.orzverse.com/api/auth";
 
   type LoginType = {
@@ -15,15 +9,7 @@ function useAuth() {
     password: string;
     remember: boolean;
   };
-
-  async function login(credentials: LoginType) {
-    try {
-      const res = await axiosInstance.post(`${baseURL}/login`, credentials);
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  }
+  const login = (credentials: LoginType) => axiosRaw("post", `${baseURL}/login`, credentials);
 
   type RegisterType = {
     name: string;
@@ -32,120 +18,23 @@ function useAuth() {
     password: string;
     password_confirmation: string;
   };
+  const register = (data: RegisterType) => axiosRaw("post", `${baseURL}/register`, data);
 
-  async function register(data: RegisterType) {
-    try {
-      const res = await axiosInstance.post(`${baseURL}/register`, data);
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async function currentUser(token: string) {
-    try {
-      const res = await axiosInstance.get(`${baseURL}/current-user`, {
+  const currentUser = (token: string) =>
+    axiosFetch(
+      "get",
+      `${baseURL}/current-user`,
+      {},
+      {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      });
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  // async function getCsrfToken(method: any) {
-  //   const baseURL = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api` : "https://be-nyatet.orzverse.com/api";
-
-  //   if (method && ["post", "put", "patch", "delete"].includes(method)) {
-  //     try {
-  //       const resServer = await axiosInstance.get(`${baseURL}/check-connection`);
-  //       if (resServer?.status === 200) {
-  //         setCookie("CSRF-TOKEN", resServer?.data.csrf_token || "", {
-  //           path: "/",
-  //           maxAge: 60 * 60 * 24,
-  //           secure: true,
-  //           sameSite: "strict",
-  //         });
-  //       }
-  //     } catch (err) {
-  //       if (err.status === 401) {
-  //         deleteCookie("token", { path: "/" });
-  //         deleteCookie("user-ip", { path: "/" });
-  //         localStorage.removeItem("encryptedData");
-  //         window.location.href = `${window.location.origin}/auth/login`;
-  //       } else {
-  //         await writeLogClient("error", err);
-  //         window.location.reload();
-  //       }
-  //     }
-  //   }
-  // }
+      }
+    );
 
   const logout = (token?: string) => axiosLogout(`${baseURL}/logout`, token);
-  // async function logout(token?: string) {
-  //   // X-CSRF-TOKEN
-  //   const csrfToken = (await getCookie("CSRF-TOKEN")) ?? "";
 
-  //   // User-IP
-  //   let userIp: string = "";
-  //   const getUserIp = (await getCookie("user-ip")) ?? null;
-  //   if (getUserIp) {
-  //     const parsedUserIp = getUserIp.replace(/=/g, "");
-  //     userIp = parsedUserIp;
-  //   }
-
-  //   // Fingerprint_
-  //   const fingerprint = (await getCookie("fingerprint_")) ?? "";
-
-  //   // Authorization
-  //   let bearerToken: string = "";
-  //   if (token) {
-  //     bearerToken = `Bearer ${token}`;
-  //   } else {
-  //     const cookieToken = (await getCookie("token")) ?? null;
-  //     if (cookieToken) {
-  //       bearerToken = `Bearer ${cookieToken}`;
-  //     } else {
-  //       const encryptedData = localStorage.getItem("encryptedData") ?? null;
-  //       if (encryptedData) {
-  //         const decryptedData = decryptData(encryptedData);
-  //         bearerToken = `Bearer ${decryptedData.token}`;
-  //       }
-  //     }
-  //   }
-
-  //   const config = {
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Accept: "application/json",
-  //       "X-CSRF-TOKEN": csrfToken,
-  //       "User-IP": userIp,
-  //       Fingerprint_: fingerprint,
-  //       Authorization: bearerToken,
-  //     },
-  //   };
-
-  //   try {
-  //     const res = await axios.delete(`${baseURL}/logout`, config);
-  //     return res;
-  //   } catch (err) {
-  //     const method = err.config?.method;
-  //     await getCsrfToken(method);
-
-  //     throw err;
-  //   }
-  // }
-
-  async function resetPassword(credential: { email: string }) {
-    try {
-      const res = await axiosInstance.post(`${baseURL}/reset-password`, credential);
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  }
+  const resetPassword = (credential: { email: string }) => axiosRaw("post", `${baseURL}/reset-password`, credential);
 
   type NewPasswordType = {
     email: string;
@@ -153,32 +42,19 @@ function useAuth() {
     password_confirmation: string;
     token: string;
   };
+  const newPassword = (credentials: NewPasswordType) => axiosRaw("post", `${baseURL}/new-password`, credentials);
 
-  async function newPassword(credentials: NewPasswordType) {
-    try {
-      const res = await axiosInstance.post(`${baseURL}/new-password`, credentials);
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async function setFingerprint(token: string) {
-    try {
-      const res = await axiosInstance.patch(
-        `${baseURL}/set-fingerprint`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return res;
-    } catch (err) {
-      throw err;
-    }
-  }
+  const setFingerprint = (token: string) =>
+    axiosFetch(
+      "patch",
+      `${baseURL}/set-fingerprint`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
   return {
     login,

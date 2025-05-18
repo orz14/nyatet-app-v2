@@ -2,7 +2,6 @@ import MetaTag from "@/components/MetaTag";
 import useAuth from "@/configs/api/auth";
 import { useAppContext } from "@/contexts/AppContext";
 import { useToast } from "@/hooks/use-toast";
-import useLogout from "@/hooks/useLogout";
 import { writeLogClient } from "@/lib/logClient";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
@@ -13,12 +12,9 @@ export default function AuthorizationCallbackPage() {
   const { toast } = useToast();
   const { currentUser, setFingerprint } = useAuth();
   const { login } = useAppContext();
-  const { logoutAuth } = useLogout();
 
   async function handleCatch(err: any) {
-    if (err.status === 401) {
-      await logoutAuth(true);
-    } else {
+    if (err.status !== 401) {
       toast({
         variant: "destructive",
         description: err.message,

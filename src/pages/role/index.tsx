@@ -9,7 +9,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import useRole from "@/configs/api/role";
 import AdminCheck from "@/hoc/AdminCheck";
 import { useToast } from "@/hooks/use-toast";
-import useLogout from "@/hooks/useLogout";
 import EachUtils from "@/utils/EachUtils";
 import { roleNameFormat } from "@/utils/formatters";
 import { useEffect, useState } from "react";
@@ -31,7 +30,6 @@ function RoleIndexPage({ authLoading }: any) {
   ];
 
   const { getAllRole } = useRole();
-  const { logoutAuth } = useLogout();
   const { toast } = useToast();
   const [roles, setRoles] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -45,9 +43,7 @@ function RoleIndexPage({ authLoading }: any) {
         setRoles(res?.data);
       }
     } catch (err) {
-      if (err.status === 401) {
-        await logoutAuth(true);
-      } else {
+      if (err.status !== 401) {
         toast({
           variant: "destructive",
           description: err.message,

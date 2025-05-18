@@ -6,7 +6,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { capitalize, timeFormat } from "@/utils/formatters";
 import { useToast } from "@/hooks/use-toast";
 import useLog from "@/configs/api/log";
-import useLogout from "@/hooks/useLogout";
 import { useEffect, useState } from "react";
 import EachUtils from "@/utils/EachUtils";
 import RefreshDataButton from "@/components/dashboard/RefreshDataButton";
@@ -27,7 +26,6 @@ function BackendlogsPage({ authLoading }: any) {
 
   const { toast } = useToast();
   const { getLog } = useLog();
-  const { logoutAuth } = useLogout();
   const [logs, setLogs] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -39,9 +37,7 @@ function BackendlogsPage({ authLoading }: any) {
         setLogs(res?.data);
       }
     } catch (err) {
-      if (err.status === 401) {
-        await logoutAuth(true);
-      } else if (err.status === 404) {
+      if (err.status === 404) {
         toast({
           variant: "destructive",
           description: err.response.data.message,

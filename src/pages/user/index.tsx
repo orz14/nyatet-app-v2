@@ -11,9 +11,9 @@ import RefreshDataButton from "@/components/dashboard/RefreshDataButton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import TextSkeleton from "@/components/skeleton/TextSkeleton";
-import useLogout from "@/hooks/useLogout";
 import { roleNameFormat, timeFormat } from "@/utils/formatters";
 import AuthorizationCheckLoader from "@/components/loader/AuthorizationCheckLoader";
+import { writeLogClient } from "@/lib/logClient";
 
 function UserIndexPage({ authLoading }: any) {
   const title = "User Management";
@@ -26,7 +26,6 @@ function UserIndexPage({ authLoading }: any) {
   ];
 
   const { getAllUser } = useUser();
-  const { logoutAuth } = useLogout();
   const [users, setUsers] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -38,8 +37,8 @@ function UserIndexPage({ authLoading }: any) {
         setUsers(res?.data);
       }
     } catch (err) {
-      if (err.status === 401) {
-        await logoutAuth(true);
+      if (err.status !== 401) {
+        await writeLogClient("error", err);
       }
     } finally {
       setLoading(false);

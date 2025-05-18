@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import useLog from "@/configs/api/log";
 import AdminCheck from "@/hoc/AdminCheck";
 import { useToast } from "@/hooks/use-toast";
-// import useLogout from "@/hooks/useLogout";
 import { writeLogClient } from "@/lib/logClient";
 import { useEffect, useState } from "react";
 
@@ -24,7 +23,6 @@ function FrontendLogsPage({ authLoading }: any) {
 
   const { toast } = useToast();
   const { getNextLog, clearNextLog } = useLog();
-  // const { logoutAuth } = useLogout();
   const [logs, setLogs] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
 

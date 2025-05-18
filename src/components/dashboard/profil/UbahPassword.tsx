@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { sanitizeInput } from "@/utils/sanitizeInput";
-import useLogout from "@/hooks/useLogout";
 import { Loader2 } from "lucide-react";
 import useProfile from "@/configs/api/profile";
 import FormField from "@/components/FormField";
@@ -14,7 +13,6 @@ import { writeLogClient } from "@/lib/logClient";
 export default function UbahPassword() {
   const { loadingContext } = useAppContext();
   const { updatePassword } = useProfile();
-  const { logoutAuth } = useLogout();
   const { toast } = useToast();
   const [loading, setLoading] = useState<boolean>(false);
   const [errCurrentPassword, setErrCurrentPassword] = useState<string | null>(null);
@@ -59,9 +57,7 @@ export default function UbahPassword() {
           });
         }
       } catch (err) {
-        if (err.status === 401) {
-          await logoutAuth(true);
-        } else if (err.status === 422) {
+        if (err.status === 422) {
           if (err.response.data.message.current_password) {
             setErrCurrentPassword(err.response.data.message.current_password[0]);
           }

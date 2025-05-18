@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { sanitizeInput } from "@/utils/sanitizeInput";
-import useLogout from "@/hooks/useLogout";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import FormField from "@/components/FormField";
@@ -14,7 +13,6 @@ import { writeLogClient } from "@/lib/logClient";
 export default function InformasiProfil() {
   const { loadingContext, user, updateUser } = useAppContext();
   const { updateProfile } = useProfile();
-  const { logoutAuth } = useLogout();
   const { toast } = useToast();
   const [loading, setLoading] = useState<boolean>(false);
   const [errName, setErrName] = useState<string | null>(null);
@@ -59,9 +57,7 @@ export default function InformasiProfil() {
           });
         }
       } catch (err) {
-        if (err.status === 401) {
-          await logoutAuth(true);
-        } else if (err.status === 422) {
+        if (err.status === 422) {
           if (err.response.data.message.name) {
             setErrName(err.response.data.message.name[0]);
           }

@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import useRole from "@/configs/api/role";
 import { useToast } from "@/hooks/use-toast";
-import useLogout from "@/hooks/useLogout";
 import { writeLogClient } from "@/lib/logClient";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
@@ -15,7 +14,6 @@ type DeleteRoleType = {
 export default function DeleteRole({ id, fetchFunction }: DeleteRoleType) {
   const { destroy } = useRole();
   const { toast } = useToast();
-  const { logoutAuth } = useLogout();
   const [loading, setLoading] = useState<boolean>(false);
 
   async function handleDelete(id: string) {
@@ -30,9 +28,7 @@ export default function DeleteRole({ id, fetchFunction }: DeleteRoleType) {
         await fetchFunction();
       }
     } catch (err) {
-      if (err.status === 401) {
-        await logoutAuth(true);
-      } else if (err.status === 404) {
+      if (err.status === 404) {
         toast({
           variant: "destructive",
           description: err.response.data.message,

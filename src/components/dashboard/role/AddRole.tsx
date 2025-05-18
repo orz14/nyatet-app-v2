@@ -6,7 +6,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { sanitizeInput } from "@/utils/sanitizeInput";
-import useLogout from "@/hooks/useLogout";
 import { Loader2 } from "lucide-react";
 import FormField from "@/components/FormField";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -19,7 +18,6 @@ type AddRoleType = {
 export default function AddRole({ fetchFunction }: AddRoleType) {
   const { store } = useRole();
   const { toast } = useToast();
-  const { logoutAuth } = useLogout();
   const [loading, setLoading] = useState<boolean>(false);
   const [errRole, setErrRole] = useState<string | null>(null);
   const [open, setOpen] = useState<boolean>(false);
@@ -50,9 +48,7 @@ export default function AddRole({ fetchFunction }: AddRoleType) {
           await fetchFunction();
         }
       } catch (err) {
-        if (err.status === 401) {
-          await logoutAuth(true);
-        } else if (err.status === 422) {
+        if (err.status === 422) {
           if (err.response.data.message.role) {
             setErrRole(err.response.data.message.role[0]);
           }
