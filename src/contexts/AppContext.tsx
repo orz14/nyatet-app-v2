@@ -150,7 +150,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
-  async function deviceId() {
+  async function getDeviceId() {
     const getFingerprint = getCookie("fingerprint_") ?? null;
     if (!getFingerprint) {
       let fpb_: string = "";
@@ -183,38 +183,47 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         sameSite: "strict",
       });
     }
+
+    return true;
   }
 
-  async function getIp() {
+  async function getIdentity() {
     return new Promise(async (resolve, reject) => {
-      const getIpBefore = (await getCookie("user-ip")) ?? null;
-      let ipBefore: string | null = "";
-      if (getIpBefore) {
-        ipBefore = getIpBefore.replace("=", "");
-      } else {
-        ipBefore = null;
-      }
-
       try {
-        const res = await getUserIp();
-        const ipAfter = res?.data.ip;
+        const resDeviceId = await getDeviceId();
+        if (resDeviceId === true) {
+          const getIpBefore = (await getCookie("user-ip")) ?? null;
+          let ipBefore: string | null = "";
+          if (getIpBefore) {
+            ipBefore = getIpBefore.replace("=", "");
+          } else {
+            ipBefore = null;
+          }
 
-        if (ipBefore != ipAfter) {
-          setCookie("user-ip", ipAfter, {
-            path: "/",
-            maxAge: 60 * 60 * 24,
-            secure: true,
-            sameSite: "strict",
-          });
+          try {
+            const resIp = await getUserIp();
+            const ipAfter = resIp?.data.ip;
+
+            if (ipBefore != ipAfter) {
+              setCookie("user-ip", ipAfter, {
+                path: "/",
+                maxAge: 60 * 60 * 24,
+                secure: true,
+                sameSite: "strict",
+              });
+            }
+            resolve(ipAfter);
+          } catch (err) {
+            setCookie("user-ip", "", {
+              path: "/",
+              maxAge: 60 * 60 * 24,
+              secure: true,
+              sameSite: "strict",
+            });
+            reject(err);
+          }
         }
-        resolve(ipAfter);
       } catch (err) {
-        setCookie("user-ip", "", {
-          path: "/",
-          maxAge: 60 * 60 * 24,
-          secure: true,
-          sameSite: "strict",
-        });
         reject(err);
       }
     });
@@ -328,8 +337,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       const callbackUrl = encodeURI(router.asPath);
 
       try {
-        await deviceId();
-        await getIp();
+        await getIdentity();
         try {
           const resServer = await checkConnection();
           if (resServer.status === 200) {
