@@ -402,6 +402,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
           }
         } catch (err) {
           if (err.status === 401) {
+            await writeLogClient("warning", {
+              message: "Token not valid from checkConnection api.",
+            });
             await handleLogout(callbackUrl, "Token not valid. Please log in again.");
           } else {
             setOffline(true);
